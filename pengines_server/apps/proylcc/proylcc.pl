@@ -8,9 +8,8 @@
 %
 % XsY is the result of replacing the occurrence of X in position XIndex of Xs by Y.
 /*
-CB: cuando el indice es 0 entonces reemplaza el primer elemento de la lista [X|Xs] por la Y, quedando como dato de salida [Y|Ys]
-CR: Llama recursivamente disminuyendo el indice hasta que el indice sea 0 y el 1er elem sea X 
-Pregunta: Porque siempre reemplaza al 1er elem de la lista?
+CB: cuando el indice es 0 entonces reemplaza el elemento X de la lista [X|Xs] por la Y, quedando como dato de salida [Y|Ys]
+CR: Llama recursivamente disminuyendo el indice hasta que el indice sea 0 y luegp reemplaza donde estaba la X por la Y
 */
 
 replace(X, 0, Y, [X|Xs], [Y|Xs]).
@@ -30,7 +29,7 @@ content contenido que es # o X
 Pos es una lista [Fila, Columna], indicando la posición donde se desea colocar Contenido
 row clues y col clues son las pistas de las filas y col respectivamente
 FilaSat es 1 si las fila de Pos satisface las pistas asociadas, y 0 en caso contrario, ColSat es analogo
-
+cambiar los 0 por 2 var 
 */
 
 put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
@@ -42,6 +41,6 @@ put(Content, [RowN, ColN], _RowsClues, _ColsClues, Grid, NewGrid, 0, 0):-
 	% Otherwise (;)
 	% NewRow is the result of replacing the cell in position ColN of Row by Content (no matter its content: _Cell).			
 	(replace(Cell, ColN, _, Row, NewRow),
-	Cell == Content
+	Cell == Content		/*Si estas pintando y lo presionas de nuevo lo despinta*/
 		;
 	replace(_Cell, ColN, Content, Row, NewRow)).
