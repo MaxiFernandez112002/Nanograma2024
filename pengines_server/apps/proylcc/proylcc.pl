@@ -81,7 +81,7 @@ verificar_fila(_,_,_,0).									% Si termino de recorrer ambas listas y no se v
 
 /*
 obtener_columna_acum(+Grilla, +NumCol, -ColumnaResultante)
-CB: cuando la lista de filas está vacía.
+CB: cuando la lista de filas está vacía entonces la columna es la lista vacia.
 CR: Si la grilla no esta vacia, entonces en la 1er lista se busca el elem que se encuentre en la columna deseada y se lo agrega al comienzo de la columna de salida,
 luego se llama recursivamente con la cola de la grilla
 */
@@ -103,10 +103,11 @@ verificar_columna(IndiceColumna,PistasFilas,GrillaRes, 1) :-
 verificar_columna(_,_,_,0).
 
 
-	%
-	% verificar_pistas_en_lista(+Pistas, +FiladeGrilla)
-	%
-/*
+
+	
+/*	verificar_pistas_en_lista(+Pistas, +FiladeGrilla)
+
+verificar_pistas_en_lista verifica que se cumpla que no haya mas #s que pistas dadas
 CB: Si ya se descontaron las pistas dadas (hay 0 pistas) no tiene que haber #s en la lista
 CR: Si hay pistas y el primer elem de la lista es # entonces se verifica que cumpla si hay cierta cantidad de # consecutivos, si cumple luego se llama recursivamente 
 con las pistas restantes y la lista restante
@@ -126,13 +127,14 @@ verificar_pistas_en_lista(Pistas, [Y|ListaFilaS]):-
 	verificar_pistas_en_lista(Pistas, ListaFilaS).
 
 
-%
+
 /*
  verificar_minimo_pconsecutivos( +NumeroPista, +FilaARecorrer, -FilaRestante)
- CB: si no hay mas pistas que verificar y no hay mas lista por recorrer ent las pistas se cumple
+ CB: si hay 0 pistas que verificar y no hay mas lista por recorrer ent las pistas se cumple
  CB2: si no hay pista y si hay lista entonces si el primer elem de la lista no es # entonces cumple con que haya p #s consecutivos
  CR: si hay pista entonces si el 1er elem de la lista es # entonces descontar pista y llamamos recursivamente con lista'.
- lista' es lista sin su 1er elem 
+ lista' es lista sin su 1er elem .
+ FilaRestante es la porcion de lista que no se recorrio aun.
 */
 
 verificar_minimo_pconsecutivos(0,[],[]).	%													   
