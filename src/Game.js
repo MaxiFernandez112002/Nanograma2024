@@ -237,9 +237,29 @@ function Game() {
     }
 
     function handleComprobar() {
-        // Aquí puedes agregar la lógica para comprobar la solución del juego.
-        // Por ejemplo, puedes enviar una consulta al servidor Pengine para verificar si la solución es correcta.
-    }
+      if (!grid || !rowsClues || !colsClues) {
+          return; // No se puede comprobar si no se han inicializado la grilla y las pistas.
+      }
+      
+      // Convertir la grilla y las pistas a cadenas JSON para enviarlas como argumentos a la consulta Prolog.
+      const gridS = JSON.stringify(grid);
+      const rowsCluesS = JSON.stringify(rowsClues);
+      const colsCluesS = JSON.stringify(colsClues);
+  
+      // Construir la consulta Prolog con los argumentos necesarios.
+      const queryS = `comprobar_grilla(${gridS}, ${rowsCluesS}, ${colsCluesS}, FilaSat, ColSat)`;
+  
+      // Enviar la consulta al servidor Pengine.
+      pengine.query(queryS, (success, response) => {
+          if (success) {
+              // Handle la respuesta del servidor aquí.
+              console.log('Felicidades ganaste!:', response);
+          } else {
+              console.error('Error al ejecutar la consulta Prolog.');
+          }
+      });
+  }
+  
 
     if (!grid) {
         return null;

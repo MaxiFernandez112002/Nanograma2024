@@ -52,10 +52,6 @@ put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, Nue
 																	% en caso de cumplirse ColSat es 1, caso contrario 0.
 
 
-
-
-
-
 /*
 verificar_fila(+Posicion,+ListaPistas,+GrillaRes,-N)
 verifica que la fila/columna tenga sus pistas satisfechas.
@@ -74,7 +70,6 @@ verificar_fila(IndiceFila, PistasFilas, GrillaRes, 1):-
     verificar_pistas_en_lista(PistaDeFila, Filadegrilla).	% Verifica que la fila de la grilla cumpla con las pistas de la misma
 
 verificar_fila(_,_,_,0).									% Si termino de recorrer ambas listas y no se verifica las pistas en lista, retorna 0.
-
 
 
 
@@ -119,7 +114,7 @@ verificar_pistas_en_lista([],ListaFila):-
 
 verificar_pistas_en_lista([X|PistasS], [Y|ListaFilaS]):-
 	Y == "#",
-	verificar_minimo_pconsecutivos(X, [Y|ListaFilaS], Restante),	%en caso de q se cumpla q haya p consecutivos retorna la lista restante
+	verificar_pconsecutivos(X, [Y|ListaFilaS], Restante),	%en caso de q se cumpla q haya p consecutivos retorna la lista restante
 	verificar_pistas_en_lista(PistasS, Restante).
 
 verificar_pistas_en_lista(Pistas, [Y|ListaFilaS]):- 
@@ -129,7 +124,7 @@ verificar_pistas_en_lista(Pistas, [Y|ListaFilaS]):-
 
 
 /*
- verificar_minimo_pconsecutivos( +NumeroPista, +FilaARecorrer, -FilaRestante)
+ verificar_pconsecutivos( +NumeroPista, +FilaARecorrer, -FilaRestante)
  CB: si hay 0 pistas que verificar y no hay mas lista por recorrer ent las pistas se cumple
  CB2: si no hay pista y si hay lista entonces si el primer elem de la lista no es # entonces cumple con que haya p #s consecutivos
  CR: si hay pista entonces si el 1er elem de la lista es # entonces descontar pista y llamamos recursivamente con lista'.
@@ -137,17 +132,67 @@ verificar_pistas_en_lista(Pistas, [Y|ListaFilaS]):-
  FilaRestante es la porcion de lista que no se recorrio aun.
 */
 
-verificar_minimo_pconsecutivos(0,[],[]).	%													   
+verificar_pconsecutivos(0,[],[]).														   
 
-verificar_minimo_pconsecutivos(0,[X|Filarestante],Filarestante):-
+verificar_pconsecutivos(0,[X|Filarestante],Filarestante):-
 	X \== "#".
 
-verificar_minimo_pconsecutivos(N,[X|Filarestante],Filarestante2):- 
+verificar_pconsecutivos(N,[X|Filarestante],Filarestante2):- 
 	X == "#", 
 	N > 0, 
-	Naux is N-1,   %
-	verificar_minimo_pconsecutivos(Naux,Filarestante,Filarestante2).
+	Naux is N-1,   
+	verificar_pconsecutivos(Naux,Filarestante,Filarestante2).
+/*
+verificar_pconsecutivos(N, [X|Filarestante], Filarestante2):- 
+	X \== "#",
+	verificar_pconsecutivos(N, Filarestante, Filarestante2).
+*/
+/*
 
+					X,#,#,#,X
+
+probar con 
+trace,proylcc:verificar_pconsecutivos(3,["#","#","#"],FilaRestante).
+True retorna lista vacia
+trace,proylcc:verificar_pconsecutivos(3,["X","#","#","#","X"],FilaRestante).
+True retorna lista vacia
+trace,proylcc:verificar_pconsecutivos(3,["#","#","#","X","X"],FilaRestante).
+True retorna lista=["X"]
+trace,proylcc:verificar_pconsecutivos(3,["#","#","#","#","X"],FilaRestante).
+False
+*/
+
+
+/*
+Comprobar que se cumplan las pistas de todas las filas y todas las columnas
+
+
+*/
+
+comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
+	comprobar_todas_filas(Grilla, FilasSat, 0, PistasFilas),			%empieza comprobando las filas desde la primera (la 0)
+	comprobar_todas_columnas(Grilla, ColasSat, 0, PistasCol),			%empieza a comprobar las columnas desde la primera (la 0)
+	FilasSat = 1,
+	ColasSat = 1.
+
+/*
+comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
+comprobar_todas_filas(+Grilla, -FilaSat, +NumeroFila, +PistasFilas)
+*/
+comprobar_todas_filas([CabezaGrilla | ColaGrilla], FilaSat, NumeroFila, PistasFilas):-
+	verificar_fila(NumeroFila, PistasFilas, NuevaGrilla, FilaSat),
+	NumeroFila is NumeroFila + 1,
+	comprobar_todas_filas(ColaGrilla, FilaSat, NumeroFila, PistasFilas).
+
+
+/*
+comprobar_todas_columnas comprobara que se cumplan las pistas de todas las columnas
+comprobar_todas_columnas (+Grilla, -ColSat, +NumeroCol, +PistasCol)
+*/
+comprobar_todas_columnas([CabezaGrilla | ColaGrilla], ColSat, NumeroCol, PistasCol):-
+	verificar_columna(NumeroCol, PistasCol, NuevaGrilla, ColSat),
+	NumeroCol is NumeroCol + 1,
+	comprobar_todas_columnas(ColaGrilla, ColSat, NumeroCol, PistasCol).
 
 /*
 
@@ -158,42 +203,44 @@ verificar_minimo_pconsecutivos(N,[X|Filarestante],Filarestante2):-
 			[5]	["#" ,"#","#" , _  , _ ],
 			[5]	[ _  , _ ,"#" ,"#" ,"#"]
 
-[["X", _ , _ , _ , _ ], 		
- ["X", _ ,"X", _ , _ ],
- ["X", _ , _ , _ , _ ],	
- ["#","#","#", _ , _ ],
- [ _ , _ ,"#","#","#"]
-]
-
-
-	¿Que pasaria si recibimos put(#, [4,0], 3, 2, Grilla, NuevaGrilla, FilaSat, ColSat)?
+		put("#", [4,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], 
+		[["X",_,_,_,_],
+		["X",_,"#",_,_],
+		["X",_,_,"#",_],
+		["#","#","#",_,"#"],
+		[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
 	
-	replace(Fila, 4, NewFila, Grilla, NuevaGrilla)
 
-	¿Que pasa en el replace(Fila, 4, NewFila, Grilla, NuevaGrilla)?
-		4 > 0 ? si ent disminuye
-		3
-		replace(Fila, 3, NewFila, Grilla, NuevaGrilla)
-		3 > 0? si ent disminuye
-		2
-		replace(Fila, 2, NewFila, Grilla, NuevaGrilla)
-		2 > 0? si ent disminuye
-		1
-		replace(Fila, 1, NewFila, Grilla, NuevaGrilla)
-		1 > 0? si ent disminuye
-		0
-		replace(Fila, 0, NewFila, Grilla, NuevaGrilla)
+	comprobar_grilla([
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
+		["#","#","#","#","#"]],
+		 [[3],[1,2],[4],[5],[5]], 
+		 [[2],[5],[1,3],[5],[4]], 
+		 FilaSat, ColSat).
 
-	ask((QueryId=12,((
-	put("#", [4,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], 
-	[["X",_,_,_,_],
-	["X",_,"#",_,_],
-	["X",_,_,"#",_],
-	["#","#","#",_,"#"],
-	[_,_,"#","#","#"]], ResGrid, RowSat, ColSat)
-	, Success = 1) ; Success = 0)), []) .
-	
-	en la recursion del replace llama con la grilla entera y cuando llama recursivamente llama con la cola de la grilla 
-	[Grilla | ColaGrilla]
+
+		comprobar_todas_filas([CabezaGrilla | ColaGrilla], FilaSat, NumeroFila, PistasFilas):-
+
+		comprobar_todas_filas([
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
+		["#","#","#","#","#"]],
+		 FilaSat, 
+		 0,
+		 [[3],[1,2],[4],[5],[5]] 
+		 ).
+
+
+		ask((QueryId=12,((put("#", [2,1], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], [["X",_,"#","#",_],["X",_,"X","#","#"],["X",_,"#","#","#"],["#","#","#","#","#"],["#","#","#","#","#"]], ResGrid, RowSat, ColSat), Success = 1) ; Success = 0)), []) .
+
+
+put("#", [1,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], [["X",_,_,_,_],["X","#","X","#","X"],["X",_,_,_,"#"],["#","#","#",_,_],[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
+
+
 
 */
