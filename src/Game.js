@@ -254,9 +254,11 @@ function Game() {
           if (success) {
               // Handle la respuesta del servidor aquí.
               console.log('Felicidades ganaste!:', response);
+              alert('¡Felicidades, ganaste!');
           } else {
               console.error('Error al ejecutar la consulta Prolog.');
           }
+          
       });
   }
   
