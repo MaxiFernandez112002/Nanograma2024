@@ -53,6 +53,9 @@ put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, Nue
 
 
 /*
+
+put(#,[1,3],)
+
 verificar_fila(+Posicion,+ListaPistas,+GrillaRes,-N)
 verifica que la fila/columna tenga sus pistas satisfechas.
 1==TRUE, 0==FALSE
@@ -89,7 +92,16 @@ obtener_columna_acum([], _, ColumnaAcum, ColumnaAcum).  %
 obtener_columna_acum([Fila|Grilla], Col, ColumnaAcum, Columna) :-
 	nth0(Col, Fila, Elem),  % Obtenemos el elemento en la posición Col de la fila actual.
 	obtener_columna_acum(Grilla, Col, [Elem|ColumnaAcum], Columna).  % Llamada recursiva con el acumulador actualizado.
+/*
+proylcc:obtener_columna([
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
+		["#","#","#","#","X"]],
+	0, Columna).
 
+*/
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Predicado para invertir una lista
 invertir_lista([], []). % La lista vacía invertida es también una lista vacía.
@@ -111,7 +123,15 @@ verificar_columna(IndiceColumna, PistasCol, GrillaRes, 1) :-
 
 verificar_columna(_,_,_,0).
 
+/*
+proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"]],1).
 
+*/
 
 	
 /*	verificar_pistas_en_lista(+Pistas, +FiladeGrilla)
@@ -188,8 +208,32 @@ comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 	contar_columnas(Grilla, CantColumnas),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas),			%empieza comprobando las filas desde la primera (la 0)
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),			%empieza a comprobar las columnas desde la primera (la 0)
-	FilaSat = 1,
-	ColSat = 1.
+	FilaSat == 1,
+	ColSat == 1.
+
+/*
+	CASO GODINES
+	proylcc:comprobar_grilla([
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
+		["#","#","#","#","#"]],
+		 [[3],[1,2],[4],[5],[5]], 
+		 [[2],[5],[1,3],[5],[4]], 
+		 FilaSat, ColSat).
+
+		CASO MALO:
+		proylcc:comprobar_grilla([
+		["X","#","X","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
+		["#","#","#","X","#"]],
+		 [[3],[1,2],[4],[5],[5]], 
+		 [[2],[5],[1,3],[5],[4]], 
+		 FilaSat, ColSat).
+*/
 
 /*
 comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
@@ -205,12 +249,15 @@ comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 
 
 /*
+COLSAT = 0 = FALSE
+COLSAT = 1 = TRUE
 comprobar_todas_columnas comprobara que se cumplan las pistas de todas las columnas
 comprobar_todas_columnas (+Grilla, -ColSat, +PistasCol, +CantCol)
 */
 
 comprobar_todas_columnas(Grilla, ColSat, PistasCol, 0).
 
+/*PONIENDO EN VEZ DE COLSAT UN 1 ANDA BIEN*/
 comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 	Aux is CantColumnas - 1,
 	verificar_columna(Aux, PistasCol, Grilla, ColSat),
@@ -221,7 +268,7 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 verificar_columna(IndiceColumna,PistasCol,GrillaRes, 1) :-
 
 
-comprobar_todas_columnas([
+proylcc:comprobar_todas_columnas([
 		["X","#","#","#","X"],
 		["X","#","X","#","#"],
 		["X","#","#","#","#"],
@@ -237,6 +284,18 @@ comprobar_todas_columnas([
 		["X","#","X","#","#"],
 		["X","#","#","#","#"],
 		["#","#","#","#","#"],
+		["#","#","#","#","X"]],
+		 ColSat,
+		 [[2],[5],[1,3],[5],[4]],
+		 5
+		 ).
+
+		OTRO CASO MALO
+		proylcc:comprobar_todas_columnas([
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","X","#","#","#"],
 		["#","#","#","#","X"]],
 		 ColSat,
 		 [[2],[5],[1,3],[5],[4]],
@@ -278,27 +337,7 @@ contar_columnas([H|_], Count) :-
 		["#","#","#",_,"#"],
 		[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
 	
-	CASO GODINES
-	comprobar_	grilla([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","#","#"]],
-		 [[3],[1,2],[4],[5],[5]], 
-		 [[2],[5],[1,3],[5],[4]], 
-		 FilaSat, ColSat).
 
-		CASO MALO:
-			comprobar_grilla([
-		["X","#","X","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","X","#"]],
-		 [[3],[1,2],[4],[5],[5]], 
-		 [[2],[5],[1,3],[5],[4]], 
-		 FilaSat, ColSat).
 
 
 		comprobar_todas_filas([CabezaGrilla | ColaGrilla], FilaSat, NumeroFila, PistasFilas):-
