@@ -116,19 +116,33 @@ invertir_lista([X|Xs], ListaInvertida) :-
 
 
 
-verificar_columna(IndiceColumna, PistasCol, GrillaRes, 1) :-
+verificar_columna(IndiceColumna, PistasCol, GrillaRes, ColSat) :-
 	nth0(IndiceColumna, PistasCol, FiladePistas),
 	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
-	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla).
 
-verificar_columna(_,_,_,0).
+	write('Indice columna: ' | [IndiceColumna]),nl,			%agregado
+	write('Pistas columnas: ' | [PistasCol]),nl,			%agregado
+	write('Columna a checkear: ' | [ColumnaDeGrilla]),nl,	%agregado
 
-/*
+	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla),
+	ColSat is 1.											%agregado
+
+% verificar_columna(_,_,_,0).								%quitado
+
+/*CASO MALO
 proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
 		["X","#","#","#","X"],
 		["X","#","X","#","#"],
 		["X","#","X","#","#"],
 		["X","#","#","#","#"],
+		["#","#","#","#","#"]],1).
+
+CASO BUENO
+proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
+		["X","#","#","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
 		["#","#","#","#","#"]],1).
 
 */
@@ -208,8 +222,8 @@ comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 	contar_columnas(Grilla, CantColumnas),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas),			%empieza comprobando las filas desde la primera (la 0)
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),			%empieza a comprobar las columnas desde la primera (la 0)
-	FilaSat == 1,
-	ColSat == 1.
+	FilaSat == 1,																%agregado
+	ColSat == 1.																%agregado
 
 /*
 	CASO GODINES
@@ -244,6 +258,7 @@ comprobar_todas_filas(Grilla, FilaSat, PistasFilas, 0).
 
 comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 	Aux is CantFilas - 1,
+	Aux >= 0,																		%agregado
 	verificar_fila(Aux, PistasFilas, Grilla, FilaSat),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, Aux).
 
@@ -260,6 +275,7 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, 0).
 /*PONIENDO EN VEZ DE COLSAT UN 1 ANDA BIEN*/
 comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 	Aux is CantColumnas - 1,
+	Aux >= 0,																		%agregado
 	verificar_columna(Aux, PistasCol, Grilla, ColSat),
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, Aux).
 
@@ -267,8 +283,8 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 /*
 verificar_columna(IndiceColumna,PistasCol,GrillaRes, 1) :-
 
-
-proylcc:comprobar_todas_columnas([
+	CASO BUENO
+	proylcc:comprobar_todas_columnas([
 		["X","#","#","#","X"],
 		["X","#","X","#","#"],
 		["X","#","#","#","#"],
