@@ -257,6 +257,7 @@ function Game() {
               alert('¡Felicidades, ganaste!');
           } else {
               console.error('Error al ejecutar la consulta Prolog.');
+              alert('sos boludo??');
           }
           
       });

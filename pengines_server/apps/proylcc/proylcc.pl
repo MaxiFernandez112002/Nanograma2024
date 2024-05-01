@@ -119,15 +119,10 @@ invertir_lista([X|Xs], ListaInvertida) :-
 verificar_columna(IndiceColumna, PistasCol, GrillaRes, ColSat) :-
 	nth0(IndiceColumna, PistasCol, FiladePistas),
 	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
-
-	write('Indice columna: ' | [IndiceColumna]),nl,			%agregado
-	write('Pistas columnas: ' | [PistasCol]),nl,			%agregado
-	write('Columna a checkear: ' | [ColumnaDeGrilla]),nl,	%agregado
-
 	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla),
 	ColSat is 1.											%agregado
 
-% verificar_columna(_,_,_,0).								%quitado
+  verificar_columna(_,_,_,0).								%quitado
 
 /*CASO MALO
 proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
@@ -254,7 +249,7 @@ comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
 comprobar_todas_filas(+Grilla, -FilaSat, +NumeroFila, +PistasFilas)
 */
 
-comprobar_todas_filas(Grilla, FilaSat, PistasFilas, 0).
+comprobar_todas_filas(_, _, _, 0).
 
 comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 	Aux is CantFilas - 1,
@@ -270,7 +265,7 @@ comprobar_todas_columnas comprobara que se cumplan las pistas de todas las colum
 comprobar_todas_columnas (+Grilla, -ColSat, +PistasCol, +CantCol)
 */
 
-comprobar_todas_columnas(Grilla, ColSat, PistasCol, 0).
+comprobar_todas_columnas(_, _, _, 0).
 
 /*PONIENDO EN VEZ DE COLSAT UN 1 ANDA BIEN*/
 comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
