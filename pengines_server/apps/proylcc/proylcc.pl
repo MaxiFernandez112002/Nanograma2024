@@ -67,15 +67,16 @@ Primero se entra a verificar_fila(IndiceFila, PistasFilas, GrillaRes, 1)
 y en caso de que no se verifique el predicado se va a verificar_fila(_,_,_,0).
 */
 
-verificar_fila(IndiceFila, PistasFilas, GrillaRes, 1):-
+verificar_fila(IndiceFila, PistasFilas, GrillaRes, FilaSat):-
 	nth0(IndiceFila, PistasFilas, PistaDeFila),				% Obtiene las pistas (o la pista) de la fila 
 	nth0(IndiceFila, GrillaRes, Filadegrilla),				% Obtiene la fila correspondiente a la posicion fila, de la grilla
-    verificar_pistas_en_lista(PistaDeFila, Filadegrilla).	% Verifica que la fila de la grilla cumpla con las pistas de la misma
+    verificar_pistas_en_lista(PistaDeFila, Filadegrilla),	% Verifica que la fila de la grilla cumpla con las pistas de la misma
+	FilaSat is 1.
 
 verificar_fila(_,_,_,0).									% Si termino de recorrer ambas listas y no se verifica las pistas en lista, retorna 0.
 
 
-
+/**/
 
 /*
 obtener_columna_acum(+Grilla, +NumCol, -ColumnaResultante)
@@ -242,7 +243,7 @@ comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 		 [[3],[1,2],[4],[5],[5]], 
 		 [[2],[5],[1,3],[5],[4]], 
 		 FilaSat, ColSat).
-*/
+*/ 
 
 /*
 comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
