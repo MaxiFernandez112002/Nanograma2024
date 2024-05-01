@@ -104,10 +104,10 @@ invertir_lista([X|Xs], ListaInvertida) :-
 
 
 
-verificar_columna(IndiceColumna,PistasFilas,GrillaRes, 1) :-
-	nth0(IndiceColumna,PistasFilas,FiladePistas),
-	obtener_columna(GrillaRes,IndiceColumna,ColumnaDeGrilla),
-	verificar_pistas_en_lista(FiladePistas,ColumnaDeGrilla).
+verificar_columna(IndiceColumna, PistasCol, GrillaRes, 1) :-
+	nth0(IndiceColumna, PistasCol, FiladePistas),
+	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
+	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla).
 
 verificar_columna(_,_,_,0).
 
@@ -126,10 +126,10 @@ CR2: Si hay pistas y hay lista, y el 1er elem de la lista no es # entonces se ll
 verificar_pistas_en_lista([],ListaFila):-
 	not(member("#",ListaFila)).
 
-verificar_pistas_en_lista([X|PistasS], [Y|ListaFilaS]):-
+verificar_pistas_en_lista([X|Pistas], [Y|ListaFilaS]):-
 	Y == "#",
 	verificar_pconsecutivos(X, [Y|ListaFilaS], Restante),	%en caso de q se cumpla q haya p consecutivos retorna la lista restante
-	verificar_pistas_en_lista(PistasS, Restante).
+	verificar_pistas_en_lista(Pistas, Restante).
 
 verificar_pistas_en_lista(Pistas, [Y|ListaFilaS]):- 
 	Y \== "#", 				   % Dada la lista de pistas, y el primer elemento de ListaFilaS (lista de fila)
@@ -186,10 +186,10 @@ Comprobar que se cumplan las pistas de todas las filas y todas las columnas
 comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 	contar_filas(Grilla, CantFilas),
 	contar_columnas(Grilla, CantColumnas),
-	comprobar_todas_filas(Grilla, FilasSat, PistasFilas, CantFilas),			%empieza comprobando las filas desde la primera (la 0)
-	comprobar_todas_columnas(Grilla, ColasSat, PistasCol, CantColumnas),			%empieza a comprobar las columnas desde la primera (la 0)
-	FilasSat = 1,
-	ColasSat = 1.
+	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas),			%empieza comprobando las filas desde la primera (la 0)
+	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),			%empieza a comprobar las columnas desde la primera (la 0)
+	FilaSat = 1,
+	ColSat = 1.
 
 /*
 comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
@@ -206,7 +206,7 @@ comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 
 /*
 comprobar_todas_columnas comprobara que se cumplan las pistas de todas las columnas
-comprobar_todas_columnas (+Grilla, -ColSat, +NumeroCol, +PistasCol)
+comprobar_todas_columnas (+Grilla, -ColSat, +PistasCol, +CantCol)
 */
 
 comprobar_todas_columnas(Grilla, ColSat, PistasCol, 0).
@@ -218,6 +218,9 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 
 
 /*
+verificar_columna(IndiceColumna,PistasCol,GrillaRes, 1) :-
+
+
 comprobar_todas_columnas([
 		["X","#","#","#","X"],
 		["X","#","X","#","#"],
@@ -228,16 +231,16 @@ comprobar_todas_columnas([
 		[[2],[5],[1,3],[5],[4]],
 		5).
 
-		comprobar_todas_filas([
+		CASO MALO 
+		proylcc:comprobar_todas_columnas([
 		["X","#","#","#","X"],
 		["X","#","X","#","#"],
 		["X","#","#","#","#"],
 		["#","#","#","#","#"],
-		["#","#","#","#","#"]],
-		 FilaSat, 
-		 0,
-		 [[3],[1,2],[4],[5],[5]],
-		 CantFilas
+		["#","#","#","#","X"]],
+		 ColSat,
+		 [[2],[5],[1,3],[5],[4]],
+		 5
 		 ).
 
 */
@@ -275,13 +278,24 @@ contar_columnas([H|_], Count) :-
 		["#","#","#",_,"#"],
 		[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
 	
-
-	comprobar_grilla([
+	CASO GODINES
+	comprobar_	grilla([
 		["X","#","#","#","X"],
 		["X","#","X","#","#"],
 		["X","#","#","#","#"],
 		["#","#","#","#","#"],
 		["#","#","#","#","#"]],
+		 [[3],[1,2],[4],[5],[5]], 
+		 [[2],[5],[1,3],[5],[4]], 
+		 FilaSat, ColSat).
+
+		CASO MALO:
+			comprobar_grilla([
+		["X","#","X","#","X"],
+		["X","#","X","#","#"],
+		["X","#","#","#","#"],
+		["#","#","#","#","#"],
+		["#","#","#","X","#"]],
 		 [[3],[1,2],[4],[5],[5]], 
 		 [[2],[5],[1,3],[5],[4]], 
 		 FilaSat, ColSat).
