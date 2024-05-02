@@ -104,8 +104,27 @@ body {
 .game {
   display: flex;
   flex-direction: row;
+
+}
+
+.boton-modo {
+  padding: 10px 10px; /* Aumenta el relleno a 50px */
+  margin-left: 15px; /* Aumenta el margen izquierdo a 40px */
+  margin-bottom: 10px;
+  color: rgb(0, 0, 0);
+  background-color: #90EE90;
+  font-size: 15px;
+}
+
+.boton-comprobar {
+  padding: 10px 10px; /* Aumenta el relleno a 50px */
+  margin-left: 10px; /* Aumenta el margen izquierdo a 40px */
+  margin-top: 10px;
+  color: rgb(0, 0, 0);
+  background-color: #90EE90;
+  font-size: 15px;
 }
 
 .game-info {
-  margin-left: 20px;
+  margin-left: 75px;
 }
