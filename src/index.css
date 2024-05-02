@@ -19,6 +19,39 @@ body {
   text-align: center;
 }
 
+.satisfecha,
+.insatisfecha {
+  gap:5px;
+  display: flex; /* Ensure flexbox behavior */
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1rem 1rem; /* Add some padding for breathing room */
+  border-radius: 5px; /* Add a subtle curve for a more polished look */
+}
+
+.satisfecha{
+  background-color: #90EE90; /* Light green with a touch of blue for vibrancy */
+  color: #333; /* Darker gray for better contrast */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle drop shadow for depth */
+  border: 1px solid #CCEECC;
+  /*justify-content: flex-end;
+  align-items: center;
+  background-color: lightgreen; 
+  color: black;*/
+}
+
+.insatisfecha{
+  background-color: #F08080; /* Lighter red for a less harsh tone */
+  color: #fff; /* White text for high contrast */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
+  border: 1px solid #F9A7A7;
+  /*justify-content: flex-end;
+  align-items: center;
+  background-color: rgb(188, 100, 100);
+  color: black;*/
+}
+
+
 .board {
   display: grid;
 }
@@ -38,6 +71,16 @@ body {
 
 .colClues {
   display: grid;
+}
+
+.colClues .satisfecha {
+  display: grid;
+  flex-direction:column;
+}
+
+.colClues .insatisfecha {
+  display: grid;
+  flex-direction:column;
 }
 
 .clue {

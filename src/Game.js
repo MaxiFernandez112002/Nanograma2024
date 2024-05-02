@@ -181,6 +181,9 @@ function Game() {
     const [colsClues, setColsClues] = useState(null);
     const [waiting, setWaiting] = useState(false);
     const [selectedContent, setSelectedContent] = useState('#'); // seteamos el contenido por default en '#'
+    const [filasSatisfechas, setFilasSatisfechas] = useState([]);
+    const [columnasSatisfechas, setColumnasSatisfechas] = useState([]);
+
 
     useEffect(() => {
         // Creation of the pengine server instance.
@@ -197,6 +200,9 @@ function Game() {
                 setGrid(response['Grid']);
                 setRowsClues(response['RowClues']);
                 setColsClues(response['ColumClues']);
+                setFilasSatisfechas(Array(response['RowClues'].length).fill(0));
+                setColumnasSatisfechas(Array(response['ColumClues'].length).fill(0));
+                //FALTA CHEQUEAR SI HAY PISTAS QUE SE CUMPLEN AL INICIO, HAY QUE LLAMAR AL QUERY VERIFICARFILA Y VERIFICAR COLUMNA PARA QUE MIRE SI ESTA SATISFECHA ALGUNAN DE ESTAS AL INICIO
             }
         });
     }
@@ -220,6 +226,16 @@ function Game() {
             if (success) {
                 // Update the grid with the new content.
                 setGrid(response['ResGrid']);
+
+                if (response['RowSat'] === 1)
+                    filasSatisfechas[i] = 1;
+                else
+                    filasSatisfechas[i] = 0;
+
+                if (response['ColSat'] === 1)
+                    columnasSatisfechas[j] = 1;
+                else
+                    columnasSatisfechas[j] = 0;
             }
             // Set waiting state back to false after receiving response.
             setWaiting(false);
@@ -254,10 +270,10 @@ function Game() {
           if (success) {
               // Handle la respuesta del servidor aquí.
               console.log('Felicidades ganaste!:', response);
-              alert('¡Felicidades, ganaste!');
+              alert('!ESTA GODOYCRUZ ESTO!');
           } else {
               console.error('Error al ejecutar la consulta Prolog.');
-              alert('sos boludo??');
+              alert('tu solucion no es GOD, fijate lo que haces');
           }
           
       });
@@ -280,6 +296,8 @@ function Game() {
                 rowsClues={rowsClues}
                 colsClues={colsClues}
                 onClick={(i, j) => handleClick(i, j)}
+                filasSatisfechas={filasSatisfechas}
+                columnasSatisfechas={columnasSatisfechas}
             />
             <div className="game-buttons">
                 <button onClick={handleComprobar}>Comprobar</button>
