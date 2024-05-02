@@ -14,7 +14,6 @@ function Game() {
     const [columnasSatisfechas, setColumnasSatisfechas] = useState([]);
     const [selectedContent, setSelectedContent] = useState('#'); // seteamos el contenido por default en '#'
 
-
     useEffect(() => {
         // Creation of the pengine server instance.
         // This is executed just once, after the first render.
@@ -33,6 +32,41 @@ function Game() {
                 setFilasSatisfechas(Array(response['RowClues'].length).fill(0));
                 setColumnasSatisfechas(Array(response['ColumClues'].length).fill(0));
                 //FALTA CHEQUEAR SI HAY PISTAS QUE SE CUMPLEN AL INICIO, HAY QUE LLAMAR AL QUERY VERIFICARFILA Y VERIFICAR COLUMNA PARA QUE MIRE SI ESTA SATISFECHA ALGUNAN DE ESTAS AL INICIO
+                 // Inicializar las filas y columnas satisfechas
+
+                const rowsCluesS = JSON.stringify(response['RowClues']);
+                const colsCluesS = JSON.stringify(response['ColumClues']);
+                const squaresS = JSON.stringify(response['Grid']).replaceAll('"_"', '_');
+
+
+                for (let i = 0; i < response['RowClues'].length; i++) {
+                    const FilaSat = `verificar_fila(${i}, ${rowsCluesS}, ${squaresS}, FilaSat)`;
+                    pengine.query(FilaSat, (success, response) => {   
+                        if (success) {
+                            // Update the grid with the new content.
+                            if (response['FilaSat'] === 1)
+                                filasSatisfechas[i] = 1;
+                            else
+                                filasSatisfechas[i] = 0;    
+                        } 
+                    });
+                }
+
+                for (let j = 0; j < response['ColumClues'].length; j++) {
+                    const ColSat = `verificar_columna(${j}, ${colsCluesS}, ${squaresS}, ColSat)`;
+                    pengine.query(ColSat, (success, response) => {
+                        if (success){      
+                            if (response['ColSat'] === 1)
+                                columnasSatisfechas[j] = 1;
+                            else
+                                columnasSatisfechas[j] = 0;   
+                        }
+                    });
+                }
+
+                setFilasSatisfechas(filasSatisfechas);
+                setColumnasSatisfechas(columnasSatisfechas);
+                
             }
         });
     }
@@ -120,7 +154,7 @@ function Game() {
                 />
             <div>
                 <button className='boton-modo'
-                 onClick={handleToggleContent}>Cambiar modo</button>
+                 onClick={handleToggleContent}>Cambiar a modo {selectedContent === 'X' ? '#' : 'X'}</button>
                 <button className='boton-comprobar'
                  onClick={handleComprobar}>Comprobar</button>
             <div>

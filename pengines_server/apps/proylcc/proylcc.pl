@@ -1,4 +1,4 @@
-:- module(proylcc,[ put/8 ]).
+:-module(proylcc,[ put/8 ]).
 
 :-use_module(library(lists)).
 
@@ -21,11 +21,8 @@ replace(X, XIndex, Y, [Xi|Xs], [Xi|XsY]):-
     replace(X, XIndexS, Y, Xs, XsY).
 
 
-
-
-
-
 % put(+Contenido, +Pos, +FilasClues, +ColsClues, +Grilla, -NuevaGrilla, -FilaSat, -ColSat).
+
 /*
 Fila = fila
 put/8 actualiza una matriz (Grilla) en una posición específica con un nuevo valor (Contenido), la matriz de salida sera NuevaGrilla
