@@ -136,4 +136,7 @@ body {
 
 .game-info {
   margin-left: 75px;
+  /*
+  margin-top: 10px;  
+  font-weight: bold; */
 }
