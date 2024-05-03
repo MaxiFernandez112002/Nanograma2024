@@ -70,10 +70,9 @@ verificar_fila(IndiceFila, PistasFilas, GrillaRes, 1):-
     verificar_pistas_en_lista(PistaDeFila, Filadegrilla).	% Verifica que la fila de la grilla cumpla con las pistas de la misma
 	
 
-verificar_fila(_,_,_,0).									% Si termino de recorrer ambas listas y no se verifica las pistas en lista, retorna 0.
+verificar_fila(_,_,_,0).									
 
 
-/**/
 
 /*
 obtener_columna_acum(+Grilla, +NumCol, -ColumnaResultante)
@@ -81,6 +80,7 @@ CB: cuando la lista de filas está vacía entonces la columna es la lista vacia.
 CR: Si la grilla no esta vacia, entonces en la 1er lista se busca el elem que se encuentre en la columna deseada y se lo agrega al comienzo de la columna de salida,
 luego se llama recursivamente con la cola de la grilla
 */
+
 obtener_columna(Grilla, Col, Columna) :-
 	obtener_columna_acum(Grilla, Col, [], ColumnaAux),
 	invertir_lista(ColumnaAux, Columna).
@@ -90,27 +90,19 @@ obtener_columna_acum([], _, ColumnaAcum, ColumnaAcum).
 obtener_columna_acum([Fila|Grilla], Col, ColumnaAcum, Columna) :-
 	nth0(Col, Fila, Elem),  % Obtenemos el elemento en la posición Col de la fila actual.
 	obtener_columna_acum(Grilla, Col, [Elem|ColumnaAcum], Columna).  % Llamada recursiva con el acumulador actualizado.
-/*
-proylcc:obtener_columna([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","#","X"]],
-	0, Columna).
 
-*/
-%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 % Predicado para invertir una lista
 invertir_lista([], []). % La lista vacía invertida es también una lista vacía.
 
 invertir_lista([X|Xs], ListaInvertida) :-
-    invertir_lista(Xs, RestoInvertido), % Llamada recursiva para invertir el resto de la lista
-    append(RestoInvertido, [X], ListaInvertida). % Concatenar el resto invertido con el primer elemento
+    invertir_lista(Xs, RestoInvertido), 		 
+    append(RestoInvertido, [X], ListaInvertida).
 
 /*Tenemos que recorrer la grilla de atras para adelante, para ello necesitaremos saber la cant de columnas y pedir de la ult columna - 1 el elem de la columna deseada*/
 
-%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
@@ -138,8 +130,6 @@ proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
 		["#","#","#","#","#"]],1).
 
 */
-
-
 	
 /*	verificar_pistas_en_lista(+Pistas, +FiladeGrilla)
 
@@ -183,15 +173,8 @@ verificar_pconsecutivos(N,[X|Filarestante],Filarestante2):-
 	N > 0, 
 	Naux is N-1,   
 	verificar_pconsecutivos(Naux,Filarestante,Filarestante2).
-/*
-verificar_pconsecutivos(N, [X|Filarestante], Filarestante2):- 
-	X \== "#",
-	verificar_pconsecutivos(N, Filarestante, Filarestante2).
-*/ 
-/*
 
-					X,#,#,#,X
-
+/*
 probar con 
 trace,proylcc:verificar_pconsecutivos(3,["#","#","#"],FilaRestante).
 True retorna lista vacia
@@ -204,12 +187,6 @@ False
 */
 
 
-/*
-Comprobar que se cumplan las pistas de todas las filas y todas las columnas
-
-
-*/
-
 comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 	contar_filas(Grilla, CantFilas),
 	contar_columnas(Grilla, CantColumnas),
@@ -217,31 +194,6 @@ comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),		%empieza a comprobar las columnas desde la primera (la 0)
 	FilaSat == 1,																
 	ColSat == 1.																
-
-/*
-	CASO GODINES
-	proylcc:comprobar_grilla([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","#","#"]],
-		 [[3],[1,2],[4],[5],[5]], 
-		 [[2],[5],[1,3],[5],[4]], 
-		 FilaSat, ColSat).
-
-		CASO MALO:
-		proylcc:comprobar_grilla([
-		["X","#","X","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","X","#"]],
-		 [[3],[1,2],[4],[5],[5]], 
-		 [[2],[5],[1,3],[5],[4]], 
-		 FilaSat, ColSat).
-*/ 
-
 
 
 /*
@@ -257,10 +209,6 @@ comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 	verificar_fila(Aux, PistasFilas, Grilla, FilaSat),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, Aux).
 
-/*
-
-
-	*/
 
 /*
 COLSAT = 0 = FALSE
@@ -280,49 +228,6 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 
 
 
-
-
-/*
-verificar_columna(IndiceColumna,PistasCol,GrillaRes, 1) :-
-
-	CASO BUENO
-	proylcc:comprobar_todas_columnas([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","#","#"]],
-		ColSat,
-		[[2],[5],[1,3],[5],[4]],
-		5).
-
-		CASO MALO 
-		proylcc:comprobar_todas_columnas([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","#","X"]],
-		 ColSat,
-		 [[2],[5],[1,3],[5],[4]],
-		 5
-		 ).
-
-		OTRO CASO MALO
-		proylcc:comprobar_todas_columnas([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","X","#","#","#"],
-		["#","#","#","#","X"]],
-		 ColSat,
-		 [[2],[5],[1,3],[5],[4]],
-		 5
-		 ).
-
-*/
-
-
 /*Cuenta las filas*/
 
 contar_filas([], 0). % Caso base: la lista está vacía, no hay listas dentro.
@@ -339,64 +244,7 @@ contar_columnas([H|_], Cont) :-
     length(H, Cont). % Obtener la longitud de la primera sublista
 
 
-/*
 
-				 [2]  [5] [1,3] [5] [4]
-			[3]	["X" , _ , _  , _  , _ ], 		
-		  [1,2] ["X" , _ ,"X" , _  , _ ],
-			[4]	["X" , _ , _  , _  , _ ],		% Grid
-			[5]	["#" ,"#","#" , _  , _ ],
-			[5]	[ _  , _ ,"#" ,"#" ,"#"]
-
-		put("#", [4,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], 
-		[["X",_,_,_,_],
-		["X",_,"#",_,_],
-		["X",_,_,"#",_],
-		["#","#","#",_,"#"],
-		[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
-	
-
-
-
-		comprobar_todas_filas([CabezaGrilla | ColaGrilla], FilaSat, NumeroFila, PistasFilas):-
-
-		comprobar_todas_filas([
-		["X","#","#","#","X"],
-		["X","#","X","#","#"],
-		["X","#","#","#","#"],
-		["#","#","#","#","#"],
-		["#","#","#","#","#"]],
-		 FilaSat, 
-		 0,
-		 [[3],[1,2],[4],[5],[5]],
-		 CantFilas
-		 ).
-
-
-		ask((QueryId=12,((put("#", [2,1], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], [["X",_,"#","#",_],["X",_,"X","#","#"],["X",_,"#","#","#"],["#","#","#","#","#"],["#","#","#","#","#"]], ResGrid, RowSat, ColSat), Success = 1) ; Success = 0)), []) .
-
-
-put("#", [1,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], [["X",_,_,_,_],["X","#","X","#","X"],["X",_,_,_,"#"],["#","#","#",_,_],[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
-
-*/
-
-/*
-verificar_fila_React(IndiceFila, PistasFilas, GrillaRes, FilaSat):-
-	nth0(IndiceFila, PistasFilas, PistaDeFila),				% Obtiene las pistas (o la pista) de la fila 
-	nth0(IndiceFila, GrillaRes, Filadegrilla),				% Obtiene la fila correspondiente a la posicion fila, de la grilla
-    verificar_pistas_en_lista(PistaDeFila, Filadegrilla).
-	%FilaSat is 1.	% Verifica que la fila de la grilla cumpla con las pistas de la misma.
-
-verificar_fila_React(_,_,_,0).	
-
-verificar_columna_React(IndiceColumna, PistasCol, GrillaRes, 1) :-
-	nth0(IndiceColumna, PistasCol, FiladePistas),
-	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
-	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla).											
-
-  verificar_columna_React(_,_,_,0).	
-
-*/
 comprobar_todas_filas_react(_, _, 0,[]).
 
 comprobar_todas_filas_react(Grilla, PistasFilas, CantFilas, [FilaSat|FilaConPistas]):-
