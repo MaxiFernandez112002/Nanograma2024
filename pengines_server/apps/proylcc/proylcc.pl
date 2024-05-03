@@ -85,7 +85,7 @@ obtener_columna(Grilla, Col, Columna) :-
 	obtener_columna_acum(Grilla, Col, [], ColumnaAux),
 	invertir_lista(ColumnaAux, Columna).
 
-obtener_columna_acum([], _, ColumnaAcum, ColumnaAcum).  % 
+obtener_columna_acum([], _, ColumnaAcum, ColumnaAcum).   
 
 obtener_columna_acum([Fila|Grilla], Col, ColumnaAcum, Columna) :-
 	nth0(Col, Fila, Elem),  % Obtenemos el elemento en la posición Col de la fila actual.
@@ -118,9 +118,9 @@ verificar_columna(IndiceColumna, PistasCol, GrillaRes, ColSat) :-
 	nth0(IndiceColumna, PistasCol, FiladePistas),
 	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
 	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla),
-	ColSat is 1.											%agregado
+	ColSat is 1.											
 
-  verificar_columna(_,_,_,0).								%quitado
+  verificar_columna(_,_,_,0).								
 
 /*CASO MALO
 proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
@@ -187,7 +187,7 @@ verificar_pconsecutivos(N,[X|Filarestante],Filarestante2):-
 verificar_pconsecutivos(N, [X|Filarestante], Filarestante2):- 
 	X \== "#",
 	verificar_pconsecutivos(N, Filarestante, Filarestante2).
-*/
+*/ 
 /*
 
 					X,#,#,#,X
@@ -214,9 +214,9 @@ comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 	contar_filas(Grilla, CantFilas),
 	contar_columnas(Grilla, CantColumnas),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas),			%empieza comprobando las filas desde la primera (la 0)
-	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),			%empieza a comprobar las columnas desde la primera (la 0)
-	FilaSat == 1,																%agregado
-	ColSat == 1.																%agregado
+	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),		%empieza a comprobar las columnas desde la primera (la 0)
+	FilaSat == 1,																
+	ColSat == 1.																
 
 /*
 	CASO GODINES
@@ -251,7 +251,7 @@ comprobar_todas_filas(_, _, _, 0).
 
 comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 	Aux is CantFilas - 1,
-	Aux >= 0,																		%agregado
+	Aux >= 0,																		
 	verificar_fila(Aux, PistasFilas, Grilla, FilaSat),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, Aux).
 
@@ -268,7 +268,7 @@ comprobar_todas_columnas(_, _, _, 0).
 /*PONIENDO EN VEZ DE COLSAT UN 1 ANDA BIEN*/
 comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 	Aux is CantColumnas - 1,
-	Aux >= 0,																		%agregado
+	Aux >= 0,																		
 	verificar_columna(Aux, PistasCol, Grilla, ColSat),
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, Aux).
 
@@ -318,16 +318,16 @@ verificar_columna(IndiceColumna,PistasCol,GrillaRes, 1) :-
 
 contar_filas([], 0). % Caso base: la lista está vacía, no hay listas dentro.
 
-contar_filas([H|T], Count) :-
-	contar_filas(T, RestCount), % Llamada recursiva para el resto de la lista
-	Count is RestCount + 1. % Incrementa el contador si H es una lista
+contar_filas([H|T], Cont) :-
+	contar_filas(T, Aux), % Llamada recursiva para el resto de la lista
+	Cont is Aux + 1. % Incrementa el contador si H es una lista
 
 
 % Predicado para contar la cantidad de columnas en una lista de listas
 contar_columnas([], 0). % Caso base: la lista está vacía, no hay columnas.
 
-contar_columnas([H|_], Count) :-
-    length(H, Count). % Obtener la longitud de la primera sublista
+contar_columnas([H|_], Cont) :-
+    length(H, Cont). % Obtener la longitud de la primera sublista
 
 
 /*

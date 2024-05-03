@@ -143,7 +143,7 @@ function Game() {
           if (success) {
               // Handle la respuesta del servidor aquí.
               console.log('Felicidades ganaste!:', response);
-              alert('!GANASTE, FELICIDADEZ!');
+              alert('!GANASTE, FELICIDADES!');
           } else {
               console.error('Error al ejecutar la consulta Prolog.');
           }
