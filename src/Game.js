@@ -29,9 +29,9 @@ function Game() {
             if (success) {
                 setGrid(response['Grid']);
                 setRowsClues(response['RowClues']);
-                setColsClues(response['ColumClues']);
+                setColsClues(response['ColumClues']);/*
                 setFilasSatisfechas(Array(response['RowClues'].length).fill(0));
-                setColumnasSatisfechas(Array(response['ColumClues'].length).fill(0));
+                setColumnasSatisfechas(Array(response['ColumClues'].length).fill(0));*/
                 //FALTA CHEQUEAR SI HAY PISTAS QUE SE CUMPLEN AL INICIO, HAY QUE LLAMAR AL QUERY VERIFICARFILA Y VERIFICAR COLUMNA PARA QUE MIRE SI ESTA SATISFECHA ALGUNAN DE ESTAS AL INICIO
                  // Inicializar las filas y columnas satisfechas
 
