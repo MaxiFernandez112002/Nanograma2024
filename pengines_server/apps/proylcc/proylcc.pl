@@ -380,12 +380,12 @@ put("#", [1,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], [["X",_,_,_,_]
 
 */
 
-
+/*
 verificar_fila_React(IndiceFila, PistasFilas, GrillaRes, FilaSat):-
 	nth0(IndiceFila, PistasFilas, PistaDeFila),				% Obtiene las pistas (o la pista) de la fila 
 	nth0(IndiceFila, GrillaRes, Filadegrilla),				% Obtiene la fila correspondiente a la posicion fila, de la grilla
-    verificar_pistas_en_lista(PistaDeFila, Filadegrilla),
-	FilaSat is 1.	% Verifica que la fila de la grilla cumpla con las pistas de la misma.
+    verificar_pistas_en_lista(PistaDeFila, Filadegrilla).
+	%FilaSat is 1.	% Verifica que la fila de la grilla cumpla con las pistas de la misma.
 
 verificar_fila_React(_,_,_,0).	
 
@@ -396,30 +396,30 @@ verificar_columna_React(IndiceColumna, PistasCol, GrillaRes, 1) :-
 
   verificar_columna_React(_,_,_,0).	
 
+*/
+comprobar_todas_filas_react(_, _, 0,[]).
 
-comprobar_todas_filas_React(_, _, 0,[]).
-
-comprobar_todas_filas_React(Grilla, PistasFilas, CantFilas, [FilaSat|FilaConPistas]):-
+comprobar_todas_filas_react(Grilla, PistasFilas, CantFilas, [FilaSat|FilaConPistas]):-
 	Aux is CantFilas - 1, 
 	Aux >= 0,																		
-	verificar_fila_React(Aux, PistasFilas, Grilla, FilaSat),
-	comprobar_todas_filas_React(Grilla, PistasFilas, Aux, FilaConPistas).	
+	verificar_fila(Aux, PistasFilas, Grilla, FilaSat),
+	comprobar_todas_filas_react(Grilla, PistasFilas, Aux, FilaConPistas).	
 
 
-comprobar_todas_columnas_React(_, _, 0,[]).
+comprobar_todas_columnas_react(_, _, 0,[]).
 	
-comprobar_todas_columnas_React(Grilla, PistasCol, CantColumnas,[ColSat|ColumnaConPistas]):-
+comprobar_todas_columnas_react(Grilla, PistasCol, CantColumnas,[ColSat|ColumnaConPistas]):-
 	Aux is CantColumnas - 1,
 	Aux >= 0,																		
-	verificar_columna_React(Aux, PistasCol, Grilla, ColSat),
-	comprobar_todas_columnas_React(Grilla, PistasCol, Aux, ColumnaConPistas).
+	verificar_columna(Aux, PistasCol, Grilla, ColSat),
+	comprobar_todas_columnas_react(Grilla, PistasCol, Aux, ColumnaConPistas).
 
 
-comprobar_grilla_React(Grilla, PistasFilas, PistasCol, FilaConPistas, ColumnaConPistas):-
+comprobar_grilla_react(Grilla, PistasFilas, PistasCol, FilaConPistas, ColumnaConPistas):-
 	contar_filas(Grilla, CantFilas),
 	contar_columnas(Grilla, CantColumnas),
-	comprobar_todas_filas_React(Grilla, PistasFilas, CantFilas, FilaConPistasInvertida),			%empieza comprobando las filas desde la primera (la 0)
-	comprobar_todas_columnas_React(Grilla, PistasCol, CantColumnas, ColumnaConPistasInvertida),
+	comprobar_todas_filas_react(Grilla, PistasFilas, CantFilas, FilaConPistasInvertida),			%empieza comprobando las filas desde la primera (la 0)
+	comprobar_todas_columnas_react(Grilla, PistasCol, CantColumnas, ColumnaConPistasInvertida),
 	invertir_lista(FilaConPistasInvertida, FilaConPistas),
 	invertir_lista(ColumnaConPistasInvertida, ColumnaConPistas).	
 

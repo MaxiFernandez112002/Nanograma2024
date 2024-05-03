@@ -13,7 +13,6 @@ function Game() {
     const [filasSatisfechas, setFilasSatisfechas] = useState([]);
     const [columnasSatisfechas, setColumnasSatisfechas] = useState([]);
     const [selectedContent, setSelectedContent] = useState('#'); // seteamos el contenido por default en '#'
-    const [initialState, setInitialState] = useState(null);
 
     useEffect(() => {
         // Creation of the pengine server instance.
@@ -27,22 +26,17 @@ function Game() {
         const queryS = 'init(RowClues, ColumClues, Grid)';
         pengine.query(queryS, (success, response) => {
             if (success) {
+
                 setGrid(response['Grid']);
                 setRowsClues(response['RowClues']);
                 setColsClues(response['ColumClues']);
 
-                setInitialState(response);
-                //FALTA CHEQUEAR SI HAY PISTAS QUE SE CUMPLEN AL INICIO, HAY QUE LLAMAR AL QUERY VERIFICARFILA Y VERIFICAR COLUMNA PARA QUE MIRE SI ESTA SATISFECHA ALGUNAN DE ESTAS AL INICIO
-                 // Inicializar las filas y columnas satisfechas
-
-                /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/ 
-                /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/ 
                 
                 const rowsCluesS = JSON.stringify(response['RowClues']);
                 const colsCluesS = JSON.stringify(response['ColumClues']);
                 const squaresS = JSON.stringify(response['Grid']).replaceAll('"_"', '_');
                 
-                const queryG = `comprobar_grilla_React(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaConPistasInvertida, ColumnaConPistasInvertida)`; 
+                const queryG = `comprobar_grilla_react(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaConPistasInvertida, ColumnaConPistasInvertida)`; 
                 pengine.query(queryG, (success, responsep) => {
                     if (success) {
                         setFilasSatisfechas(responsep['FilaConPistasInvertida']);
@@ -50,25 +44,7 @@ function Game() {
                     }
 
                 });
-                
-                /*
-                // Construir la consulta Prolog con los argumentos necesarios.
-                 const queryP = `comprobar_grilla(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaSat, ColSat)`;
   
-                // Enviar la consulta al servidor Pengine.
-                pengine.query(queryP, (successp, responsep) => {
-                if (success) {
-                    // Handle la respuesta del servidor aquí.
-                    console.log('Felicidades ganaste!:', responsep);
-                    alert('!GANASTE, FELICIDADES!');
-                } else {
-                     console.error('Error al ejecutar la consulta Prolog.');
-                }
-
-          
-                });*/
-
-                
             }
         });
     }
@@ -143,37 +119,9 @@ function Game() {
     }
 
     const statusText = 'MODO CLASICO';
-    /*
-    return (
-        <div>
-                <Board
-                    grid={grid}
-                    rowsClues={rowsClues}
-                    colsClues={colsClues}
-                    onClick={(i, j) => handleClick(i, j, selectedContent)}
-                    filasSatisfechas={filasSatisfechas}
-                    columnasSatisfechas={columnasSatisfechas}
-                />
-            <div>
-                <button className='boton-modo'
-                 onClick={handleToggleContent}>Cambiar a modo {selectedContent === 'X' ? '#' : 'X'}</button>
-                <button className='boton-comprobar'
-                 onClick={handleComprobar}>Comprobar</button>
-            <div>
-            <div className="game-info">
-                {statusText}
-            </div>
-        </div>
-        </div>
-        </div>
-    );
-}*/
+ 
 function handleRestart() {
-    if (initialState) {
-        setRowsClues(initialState['RowClues']);
-        setColsClues(initialState['ColumClues']);
-        setGrid(initialState['Grid']);
-    }
+    window.location.reload();
 }
 
 
