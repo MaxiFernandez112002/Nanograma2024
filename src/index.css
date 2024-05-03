@@ -125,6 +125,15 @@ body {
   font-size: 15px;
 }
 
+.boton-reiniciar{
+  padding: 10px 10px; /* Aumenta el relleno a 50px */
+  margin-left: 10px; /* Aumenta el margen izquierdo a 40px */
+  margin-top: 10px;
+  color: rgb(0, 0, 0);
+  background-color: #90EE90;
+  font-size: 15px;
+}
+
 .game-info {
   margin-left: 75px;
 }

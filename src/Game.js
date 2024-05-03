@@ -13,6 +13,7 @@ function Game() {
     const [filasSatisfechas, setFilasSatisfechas] = useState([]);
     const [columnasSatisfechas, setColumnasSatisfechas] = useState([]);
     const [selectedContent, setSelectedContent] = useState('#'); // seteamos el contenido por default en '#'
+    const [initialState, setInitialState] = useState(null);
 
     useEffect(() => {
         // Creation of the pengine server instance.
@@ -33,6 +34,10 @@ function Game() {
                 setColumnasSatisfechas(Array(response['ColumClues'].length).fill(0));
                 //FALTA CHEQUEAR SI HAY PISTAS QUE SE CUMPLEN AL INICIO, HAY QUE LLAMAR AL QUERY VERIFICARFILA Y VERIFICAR COLUMNA PARA QUE MIRE SI ESTA SATISFECHA ALGUNAN DE ESTAS AL INICIO
                  // Inicializar las filas y columnas satisfechas
+
+                /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/ 
+                 setInitialState(response); // Guarda el estado inicial
+                /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/ 
 
                 const rowsCluesS = JSON.stringify(response['RowClues']);
                 const colsCluesS = JSON.stringify(response['ColumClues']);
@@ -157,6 +162,7 @@ function Game() {
     }
 
     const statusText = 'MODO CLASICO';
+    /*
     return (
         <div>
                 <Board
@@ -180,6 +186,38 @@ function Game() {
         </div>
         </div>
     );
+}*/
+function handleRestart() {
+    if (initialState) {
+        setGrid(initialState['Grid']);
+        setRowsClues(initialState['RowClues']);
+        setColsClues(initialState['ColumClues']);
+        setFilasSatisfechas(Array(initialState['RowClues'].length).fill(0));
+        setColumnasSatisfechas(Array(initialState['ColumClues'].length).fill(0));
+    }
+}
+
+
+return (
+    <div>
+        <Board
+            grid={grid}
+            rowsClues={rowsClues}
+            colsClues={colsClues}
+            onClick={(i, j) => handleClick(i, j, selectedContent)}
+            filasSatisfechas={filasSatisfechas}
+            columnasSatisfechas={columnasSatisfechas}
+        />
+        <div>
+            <button className='boton-modo' onClick={handleToggleContent}>Cambiar a modo {selectedContent === 'X' ? '#' : 'X'}</button>
+            <button className='boton-comprobar' onClick={handleComprobar}>Comprobar</button>
+            <button className='boton-reiniciar' onClick={handleRestart}>Reiniciar Juego</button>
+        </div>
+        <div className="game-info">
+            {statusText}
+        </div>
+    </div>
+);
 }
 
 export default Game;
