@@ -64,11 +64,11 @@ Primero se entra a verificar_fila(IndiceFila, PistasFilas, GrillaRes, 1)
 y en caso de que no se verifique el predicado se va a verificar_fila(_,_,_,0).
 */
 
-verificar_fila(IndiceFila, PistasFilas, GrillaRes, FilaSat):-
+verificar_fila(IndiceFila, PistasFilas, GrillaRes, 1):-
 	nth0(IndiceFila, PistasFilas, PistaDeFila),				% Obtiene las pistas (o la pista) de la fila 
 	nth0(IndiceFila, GrillaRes, Filadegrilla),				% Obtiene la fila correspondiente a la posicion fila, de la grilla
-    verificar_pistas_en_lista(PistaDeFila, Filadegrilla),	% Verifica que la fila de la grilla cumpla con las pistas de la misma
-	FilaSat is 1.
+    verificar_pistas_en_lista(PistaDeFila, Filadegrilla).	% Verifica que la fila de la grilla cumpla con las pistas de la misma
+	
 
 verificar_fila(_,_,_,0).									% Si termino de recorrer ambas listas y no se verifica las pistas en lista, retorna 0.
 
@@ -114,11 +114,10 @@ invertir_lista([X|Xs], ListaInvertida) :-
 
 
 
-verificar_columna(IndiceColumna, PistasCol, GrillaRes, ColSat) :-
+verificar_columna(IndiceColumna, PistasCol, GrillaRes, 1) :-
 	nth0(IndiceColumna, PistasCol, FiladePistas),
 	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
-	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla),
-	ColSat is 1.											
+	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla).											
 
   verificar_columna(_,_,_,0).								
 
@@ -139,6 +138,7 @@ proylcc:verificar_columna(2,[[2],[5],[1,3],[5],[4]] ,[
 		["#","#","#","#","#"]],1).
 
 */
+
 
 	
 /*	verificar_pistas_en_lista(+Pistas, +FiladeGrilla)
@@ -242,6 +242,8 @@ comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
 		 FilaSat, ColSat).
 */ 
 
+
+
 /*
 comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
 comprobar_todas_filas(+Grilla, -FilaSat, +NumeroFila, +PistasFilas)
@@ -255,6 +257,10 @@ comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 	verificar_fila(Aux, PistasFilas, Grilla, FilaSat),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, Aux).
 
+/*
+
+
+	*/
 
 /*
 COLSAT = 0 = FALSE
@@ -271,6 +277,9 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 	Aux >= 0,																		
 	verificar_columna(Aux, PistasCol, Grilla, ColSat),
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, Aux).
+
+
+
 
 
 /*
@@ -369,6 +378,145 @@ contar_columnas([H|_], Cont) :-
 
 put("#", [1,4], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], [["X",_,_,_,_],["X","#","X","#","X"],["X",_,_,_,"#"],["#","#","#",_,_],[_,_,"#","#","#"]], ResGrid, RowSat, ColSat).
 
-
-
 */
+
+
+verificar_fila_React(IndiceFila, PistasFilas, GrillaRes, FilaSat):-
+	nth0(IndiceFila, PistasFilas, PistaDeFila),				% Obtiene las pistas (o la pista) de la fila 
+	nth0(IndiceFila, GrillaRes, Filadegrilla),				% Obtiene la fila correspondiente a la posicion fila, de la grilla
+    verificar_pistas_en_lista(PistaDeFila, Filadegrilla),
+	FilaSat is 1.	% Verifica que la fila de la grilla cumpla con las pistas de la misma.
+
+verificar_fila_React(_,_,_,0).	
+
+verificar_columna_React(IndiceColumna, PistasCol, GrillaRes, 1) :-
+	nth0(IndiceColumna, PistasCol, FiladePistas),
+	obtener_columna(GrillaRes, IndiceColumna, ColumnaDeGrilla),
+	verificar_pistas_en_lista(FiladePistas, ColumnaDeGrilla).											
+
+  verificar_columna_React(_,_,_,0).	
+
+
+comprobar_todas_filas_React(_, _, 0,[]).
+
+comprobar_todas_filas_React(Grilla, PistasFilas, CantFilas, [FilaSat|FilaConPistas]):-
+	Aux is CantFilas - 1, 
+	Aux >= 0,																		
+	verificar_fila_React(Aux, PistasFilas, Grilla, FilaSat),
+	comprobar_todas_filas_React(Grilla, PistasFilas, Aux, FilaConPistas).	
+
+
+comprobar_todas_columnas_React(_, _, 0,[]).
+	
+comprobar_todas_columnas_React(Grilla, PistasCol, CantColumnas,[ColSat|ColumnaConPistas]):-
+	Aux is CantColumnas - 1,
+	Aux >= 0,																		
+	verificar_columna_React(Aux, PistasCol, Grilla, ColSat),
+	comprobar_todas_columnas_React(Grilla, PistasCol, Aux, ColumnaConPistas).
+
+
+comprobar_grilla_React(Grilla, PistasFilas, PistasCol, FilaConPistas, ColumnaConPistas):-
+	contar_filas(Grilla, CantFilas),
+	contar_columnas(Grilla, CantColumnas),
+	comprobar_todas_filas_React(Grilla, PistasFilas, CantFilas, FilaConPistasInvertida),			%empieza comprobando las filas desde la primera (la 0)
+	comprobar_todas_columnas_React(Grilla, PistasCol, CantColumnas, ColumnaConPistasInvertida),
+	invertir_lista(FilaConPistasInvertida, FilaConPistas),
+	invertir_lista(ColumnaConPistasInvertida, ColumnaConPistas).	
+
+/*
+ CASO MAL GRILLA
+
+	proylcc:comprobar_grilla_React([["X","#","#","#","X"], 		
+ ["X","#","X","#","#"],
+ ["X","#","#","#","#"],		 
+ ["#","#","X","#","#"],
+ ["#","#","X","#","#"]
+],[[3], [1,2], [4], [5], [5]],
+[[2], [5], [1,3], [5], [4]],
+FilaConPistas, 
+ColumnaConPistas).
+
+
+CASO INTERMEDIO GRILLA
+	proylcc:comprobar_grilla_React(
+[["X","#","#","#","#"], 		
+ ["X","#","X","#","#"],
+ ["X","#","#","#","#"],		 
+ ["#","#","#","#","#"],
+ ["#","#","#","#","#"]
+],[[3], [1,2], [4], [5], [5]],
+[[2], [5], [1,3], [5], [4]],
+FilaConPistas, 
+ColumnaConPistas). */
+
+/*
+
+
+
+
+
+
+
+
+comprobar_todas_filas_React(Grilla, FilaSat, PistasFilas, CantFilas, FilaConPistas)
+
+CASO BUENO FILAS
+	proylcc:comprobar_todas_filas_React(
+[["X","#","#","#","X"], 		
+ ["X","#","X","#","#"],
+ ["X","#","#","#","#"],		
+ ["#","#","#","#","#"],
+ ["#","#","#","#","#"]],FilaSat, [[3], [1,2], [4], [5], [5]],5, FilaConPistas). 
+
+CASO MALO FILAS
+proylcc:comprobar_todas_filas_React(
+[["X","#","X","#","X"], 		
+ ["X","#","#","#","#"],
+ ["#","X","X","X","X"],		
+ ["#","#","X","#","#"],
+ ["#","#","X","#","#"]], [[3], [1,2], [4], [5], [5]],5, FilaConPistas).
+
+CASO INTERMEDIO
+proylcc:comprobar_todas_filas_React(
+[["X","#","#","#","X"], 		
+ ["X","#","X","X","#"],
+ ["X","#","#","#","#"],		
+ ["#","#","X","#","#"],
+ ["#","#","#","#","#"]], [[3], [1,2], [4], [5], [5]],5, FilaConPistas).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ CASO BUENO COLUMNAS
+
+ proylcc:comprobar_todas_columnas_React(
+[["X","#","#","#","X"], 		
+ ["X","#","X","#","#"],
+ ["X","#","#","#","#"],		
+ ["#","#","#","#","#"],
+ ["#","#","#","#","#"]], [[2], [5], [1,3], [5], [4]],5, ColumnaConPistas).
+
+ CASO INTERMEDIO
+proylcc:comprobar_todas_columnas_React(
+[["X","#","#","#","X"], 		
+ ["X","#","X","X","#"],
+ ["X","#","#","#","#"],		
+ ["#","#","X","#","#"],
+ ["#","#","#","#","#"]], [[2], [5], [1,3], [5], [4]],5, ColumnaConPistas).
+
+
+
+ 
+ */

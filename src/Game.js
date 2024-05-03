@@ -29,63 +29,44 @@ function Game() {
             if (success) {
                 setGrid(response['Grid']);
                 setRowsClues(response['RowClues']);
-                setColsClues(response['ColumClues']);/*
-                setFilasSatisfechas(Array(response['RowClues'].length).fill(0));
-                setColumnasSatisfechas(Array(response['ColumClues'].length).fill(0));*/
+                setColsClues(response['ColumClues']);
+
+                setInitialState(response);
                 //FALTA CHEQUEAR SI HAY PISTAS QUE SE CUMPLEN AL INICIO, HAY QUE LLAMAR AL QUERY VERIFICARFILA Y VERIFICAR COLUMNA PARA QUE MIRE SI ESTA SATISFECHA ALGUNAN DE ESTAS AL INICIO
                  // Inicializar las filas y columnas satisfechas
 
                 /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/ 
-                 setInitialState(response); // Guarda el estado inicial
                 /*%%%%%%%%%%%%%%%%%%%%%%%%%%*/ 
-
+                
                 const rowsCluesS = JSON.stringify(response['RowClues']);
                 const colsCluesS = JSON.stringify(response['ColumClues']);
                 const squaresS = JSON.stringify(response['Grid']).replaceAll('"_"', '_');
+                
+                const queryG = `comprobar_grilla_React(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaConPistasInvertida, ColumnaConPistasInvertida)`; 
+                pengine.query(queryG, (success, responsep) => {
+                    if (success) {
+                        setFilasSatisfechas(responsep['FilaConPistasInvertida']);
+                        setColumnasSatisfechas(responsep['ColumnaConPistasInvertida']);
+                    }
 
-
-                for (let i = 0; i < response['RowClues'].length; i++) {
-                    const FilaSat = `verificar_fila(${i}, ${rowsCluesS}, ${squaresS}, FilaSat)`;
-                    pengine.query(FilaSat, (success, response) => {   
-                        if (success) {
-                            // Update the grid with the new content.
-                            if (response['FilaSat'] === 1)
-                                filasSatisfechas[i] = 1;
-                            else
-                                filasSatisfechas[i] = 0;    
-                        } 
-                    });
-                }
-
-                for (let j = 0; j < response['ColumClues'].length; j++) {
-                    const ColSat = `verificar_columna(${j}, ${colsCluesS}, ${squaresS}, ColSat)`;
-                    pengine.query(ColSat, (success, response) => {
-                        if (success){      
-                            if (response['ColSat'] === 1)
-                                columnasSatisfechas[j] = 1;
-                            else
-                                columnasSatisfechas[j] = 0;   
-                        }
-                    });
-                }
-
-                setFilasSatisfechas(filasSatisfechas);
-                setColumnasSatisfechas(columnasSatisfechas);
-
+                });
+                
+                /*
                 // Construir la consulta Prolog con los argumentos necesarios.
                  const queryP = `comprobar_grilla(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaSat, ColSat)`;
   
                 // Enviar la consulta al servidor Pengine.
                 pengine.query(queryP, (successp, responsep) => {
-                if (successp) {
+                if (success) {
                     // Handle la respuesta del servidor aquí.
                     console.log('Felicidades ganaste!:', responsep);
-                    alert('!GANASTE, FELICIDADEZ!');
+                    alert('!GANASTE, FELICIDADES!');
                 } else {
                      console.error('Error al ejecutar la consulta Prolog.');
-            }
+                }
+
           
-      });
+                });*/
 
                 
             }
@@ -189,11 +170,9 @@ function Game() {
 }*/
 function handleRestart() {
     if (initialState) {
-        setGrid(initialState['Grid']);
         setRowsClues(initialState['RowClues']);
         setColsClues(initialState['ColumClues']);
-        setFilasSatisfechas(Array(initialState['RowClues'].length).fill(0));
-        setColumnasSatisfechas(Array(initialState['ColumClues'].length).fill(0));
+        setGrid(initialState['Grid']);
     }
 }
 
