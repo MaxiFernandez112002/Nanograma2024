@@ -66,6 +66,22 @@ function Game() {
 
                 setFilasSatisfechas(filasSatisfechas);
                 setColumnasSatisfechas(columnasSatisfechas);
+
+                // Construir la consulta Prolog con los argumentos necesarios.
+                 const queryP = `comprobar_grilla(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaSat, ColSat)`;
+  
+                // Enviar la consulta al servidor Pengine.
+                pengine.query(queryP, (successp, responsep) => {
+                if (successp) {
+                    // Handle la respuesta del servidor aquí.
+                    console.log('Felicidades ganaste!:', responsep);
+                    alert('!GANASTE, FELICIDADEZ!');
+                } else {
+                     console.error('Error al ejecutar la consulta Prolog.');
+            }
+          
+      });
+
                 
             }
         });
@@ -127,10 +143,9 @@ function Game() {
           if (success) {
               // Handle la respuesta del servidor aquí.
               console.log('Felicidades ganaste!:', response);
-              alert('!ESTA GODOYCRUZ ESTO!');
+              alert('!GANASTE, FELICIDADEZ!');
           } else {
               console.error('Error al ejecutar la consulta Prolog.');
-              alert('tu solucion no es GOD, fijate lo que haces');
           }
           
       });
