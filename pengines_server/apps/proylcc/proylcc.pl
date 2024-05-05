@@ -299,13 +299,6 @@ ColumnaConPistas). */
 
 /*
 
-
-
-
-
-
-
-
 comprobar_todas_filas_React(Grilla, FilaSat, PistasFilas, CantFilas, FilaConPistas)
 
 CASO BUENO FILAS
@@ -331,18 +324,6 @@ proylcc:comprobar_todas_filas_React(
  ["X","#","#","#","#"],		
  ["#","#","X","#","#"],
  ["#","#","#","#","#"]], [[3], [1,2], [4], [5], [5]],5, FilaConPistas).
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
