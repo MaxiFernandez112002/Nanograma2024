@@ -31,9 +31,10 @@ Pos es una lista [Fila, Columna], indicando la posición donde se desea colocar 
 Fila clues y col clues son las pistas de las filas y col respectivamente
 FilaSat es 1 si las fila de Pos satisface las pistas asociadas, y 0 en caso contrario, ColSat es analogo
 cambiar los 0 por 2 var 
+NonogramaCompletado = 1 si el juego se gano
 */
 
-put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, NuevaGrilla, FilaSat, ColSat):-
+put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, NuevaGrilla, FilaSat, ColSat, NonogramaCompletado):-
 
 	% NuevaGrilla es el resultado de reemplazar la fila vieja por la nueva modificada
 	replace(Fila, FilaNumero, NewFila, Grilla, NuevaGrilla),	%lo q hace este 1er replace es conseguir la fila q se busca y la misma pero modificada
@@ -45,13 +46,46 @@ put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, Nue
 
 	verificar_fila(FilaNumero,PistasFilas,NuevaGrilla,FilaSat),		% Verifica si para la fila se cumple lo indicado en su respectiva lista fila de pistas, 
 																	% en caso de cumplirse FilaSat es 1, caso contrario 0.
-	verificar_columna(ColNumero,PistasColumnas,NuevaGrilla, ColSat).% Verifica si para la columna se cumple lo indicado en su respectiva lista columna de pistas, 
+	verificar_columna(ColNumero,PistasColumnas,NuevaGrilla, ColSat),% Verifica si para la columna se cumple lo indicado en su respectiva lista columna de pistas, 
 																	% en caso de cumplirse ColSat es 1, caso contrario 0.
+
+	%Si se cumple la pista de la fila y la de la col ent comprobamos si se gano el nonograma
+	%FilaSat is 1,
+	%ColSat is 1, 
+	
+	comprobar_grilla(NuevaGrilla, PistasFilas, PistasColumnas, TodasFilasSat, TodasColSat, NonogramaCompletado).
 
 
 /*
+CASO BUENO 
+proylcc:put("#", [1,3], 
+	[[3], [1,2], [4], [5], [5]],
+	[[2], [5], [1,3], [5], [4]],
+	[["X","#","#","#","X"], 		
+ 	["X","#","X","X","#"],
+ 	["X","#","#","#","#"],		
+ 	["#","#","#","#","#"],
+ 	["#","#","#","#","#"]],
+	NuevaGrilla,
+	FilaSat,
+	ColSat,
+	NonogramaCompletado
+	 ).
 
-put(#,[1,3],)
+CASO MALO
+proylcc:put("#", [1,3], 
+	[[3], [1,2], [4], [5], [5]],
+	[[2], [5], [1,3], [5], [4]],
+	[["X","#","#","#","#"], 		
+ 	["X","#","X","X","#"],
+ 	["X","#","#","#","#"],		
+ 	["#","#","#","#","#"],
+ 	["#","#","#","#","#"]],
+	NuevaGrilla,
+	FilaSat,
+	ColSat,
+	NonogramaCompletado
+	 ).
 
 verificar_fila(+Posicion,+ListaPistas,+GrillaRes,-N)
 verifica que la fila/columna tenga sus pistas satisfechas.
@@ -187,14 +221,17 @@ False
 */
 
 
-comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat):-
+
+comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat, 1):-
 	contar_filas(Grilla, CantFilas),
 	contar_columnas(Grilla, CantColumnas),
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas),			%empieza comprobando las filas desde la primera (la 0)
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas),		%empieza a comprobar las columnas desde la primera (la 0)
-	FilaSat == 1,																
-	ColSat == 1.																
+	FilaSat is 1,																
+	ColSat is 1.
+	%NonogramaCompletado is 1.														
 
+comprobar_grilla(_, _, _, 0, 0, 0 ).
 
 /*
 comprobar_todas_filas comprobara que se cumplan las pistas de todas las filas
@@ -364,6 +401,49 @@ proylcc:comprobar_todas_columnas_React(
  ["#","#","X","#","#"],
  ["#","#","#","#","#"]], [[2], [5], [1,3], [5], [4]],5, ColumnaConPistas).
 
+
+
+CASO BUENO
+comprobar_grilla(Grilla, PistasFilas, PistasCol, FilaSat, ColSat, NonogramaCompletado):-
+
+proylcc:comprobar_grilla( 
+	[["X","#","#","#","X"], 		
+ 	["X","#","X","#","#"],
+ 	["X","#","#","#","#"],		
+ 	["#","#","#","#","#"],
+ 	["#","#","#","#","#"]],
+	[[3], [1,2], [4], [5], [5]],
+	[[2], [5], [1,3], [5], [4]],
+	FilaSat,
+	ColSat,
+	NonogramaCompletado).
+
+CASO MALO:
+proylcc:comprobar_grilla( 
+	[["X","#","#","#","X"], 		
+ 	["X","#","X","#","#"],
+ 	["X","#","#","#","#"],		
+ 	["X","#","#","X","#"],
+ 	["#","#","#","#","#"]],
+	[[3], [1,2], [4], [5], [5]],
+	[[2], [5], [1,3], [5], [4]],
+	FilaSat,
+	ColSat,
+	NonogramaCompletado).
+
+CASO BUENO:
+comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas)
+
+proylcc:comprobar_todas_filas(
+	[["X","#","#","#","X"], 		
+ 	["X","#","X","#","#"],
+ 	["X","#","#","#","#"],		
+ 	["#","#","#","#","#"],
+ 	["#","#","#","#","#"]],
+	FilaSat,
+	[[3], [1,2], [4], [5], [5]],
+	5
+	).
 
 
  
