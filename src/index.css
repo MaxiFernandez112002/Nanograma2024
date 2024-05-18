@@ -116,12 +116,12 @@ body {
   font-size: 15px;
 }
 
-.boton-comprobar {
+.boton-ayuda {
   padding: 10px 10px; /* Aumenta el relleno a 50px */
   margin-left: 10px; /* Aumenta el margen izquierdo a 40px */
   margin-top: 10px;
   color: rgb(0, 0, 0);
-  background-color: #90EE90;
+  background-color: #ece274;
   font-size: 15px;
 }
 

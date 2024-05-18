@@ -1,4 +1,4 @@
-:-module(proylcc,[ put/8 ]).
+:-module(proylcc,[ put/9 ]).
 
 :-use_module(library(lists)).
 
@@ -53,12 +53,12 @@ put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, Nue
 	%FilaSat is 1,
 	%ColSat is 1, 
 	
-	comprobar_grilla(NuevaGrilla, PistasFilas, PistasColumnas, TodasFilasSat, TodasColSat, NonogramaCompletado).
+	comprobar_grilla(NuevaGrilla, PistasFilas, PistasColumnas, _TodasFilasSat, _TodasColSat, NonogramaCompletado).
 
 
 /*
 CASO BUENO 
-proylcc:put("#", [1,3], 
+proylcc:put("#", [1,3],  
 	[[3], [1,2], [4], [5], [5]],
 	[[2], [5], [1,3], [5], [4]],
 	[["X","#","#","#","X"], 		
@@ -269,7 +269,7 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 
 contar_filas([], 0). % Caso base: la lista está vacía, no hay listas dentro.
 
-contar_filas([H|T], Cont) :-
+contar_filas([_|T], Cont) :-
 	contar_filas(T, Aux), % Llamada recursiva para el resto de la lista
 	Cont is Aux + 1. % Incrementa el contador si H es una lista
 
