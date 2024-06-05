@@ -311,7 +311,7 @@ comprobar_grilla_react(Grilla, PistasFilas, PistasCol, FilaConPistas, ColumnaCon
 
 
 /*
-rellenar_lista_izq_sin_hashtag(+Lista, +Pistas , -ListaResultante, 1)
+rellenar_lista_izq_sin_hashtag(+Lista, +Pistas , -ListaResultante, Numero)
 Nos pasan un "1" como ultimo parametro para diferenciar los # de las pistas
 la primer pista va a tener #1, la 2da va a tener #2, etc
 
@@ -323,109 +323,131 @@ repetir procedimiento para las otras pistas
 
 */
 
-rellenar_lista_izq_sin_hashtag([X | ColaLista], [0 | []], [Elem | ListaResultante], Numero, 1):- 		/*Si nos quedamos sin pistas no recorremos mas y ponemos una x al final de la pista rellenada*/
-	Elem is "X".
-
-rellenar_lista_izq_sin_hashtag([X | ColaLista], [0 | ColaPista], [Elem | ListaResultante], Numero, 1):-			/*Si nos quedamos sin pista ponemos una x luego de escribir la misma*/
-	Elem is "X",
-	NumeroAux is Numero +1,
-	rellenar_lista_izq_sin_hashtag(ColaLista, ColaPista, ListaResultante , NumeroAux, 1).
+rellenar_lista_izq_sin_hashtag([X | ColaLista], 0 , ["X" |ListaSalida], HashtagConNumero). 		/*Si nos quedamos sin pista no recorremos mas y ponemos una x al final de la pista rellenada*/
 
 
-rellenar_lista_izq_sin_hashtag([X | ColaLista], [Pista | ColaPista], [Elem | ListaResultante], Numero, 1):-
-	X \== "X",
-	Elem is "#",
+
+rellenar_lista_izq_sin_hashtag([X | ColaLista], Pista , [HashtagConNumero | ListaSalida], HashtagConNumero):-
+	/*Elem is HashtagConNumero,*/
 	PistaAux is Pista - 1,
-	rellenar_lista_izq_sin_hashtag(ColaLista, [PistaAux | ColaPista], ListaResultante, Numero, 1).
-
-rellenar_lista_izq_sin_hashtag(Lista, Pistas, ListaResultante, Numero, 0):-
-	llenar_con_x(Lista, ListaResultante, ListaNoRecorrida).
-
-
-/*pasar un numero para el 1er hashtag y luego ir sumandole uno*/
-
-
-rellenar_desde_izquierda(Lista, [Pista | ColaPista], ListaResultante):-
-	/*si no hay espacio q rellene de x el comienzo*/
-	verificar_espacio_pista(Lista, Pista, HayEspacioPista),
-	verificar_siguiente_espacio(Lista, Pista, ListaResultante, HayEspacioPista),
-	/*
-	hay q hacer funcion en la que :
-	-si hay espacio vamos a utilizar los rellenar_lista_izq_sin_hashtag
-	-si no hay espacio llamamos a verificar espacio pista nuevamente 
-	*/
-	rellenar_desde_izquierda(Lista, ColaPista, ListaResultante).
-
-
-
+	rellenar_lista_izq_sin_hashtag(ColaLista, PistaAux, ListaSalida, HashtagConNumero).
 
 /*
-rellenar_desde_izquierda_aux(Lista, [Pista | ColaPista], ListaResultante, 1):-
-	rellenar_lista_izq_sin_hashtag(Lista, [Pista | ColaPista], ListaResultante, Numero, 1).
-
-rellenar_desde_izquierda_aux(Lista, [Pista | ColaPista], ListaNoRecorrida, 0):-
-	llenar_con_x(Lista, ListaResultante, ListaNoRecorrida).
+trace, proylcc: rellenar_lista_izq_sin_hashtag([ _, _ ,_ , _ , _ , _ , _ , _ , _ , _ ], 3 , ListaSalida, "#1").
+trace, proylcc: rellenar_lista_izq_sin_hashtag([ _, _ ,_ , _ , _ , _ , _ , _ , _ , _ ], 6 , ListaSalida, "#1").
 */
 
+/*
+llenar_con_x(+Lista, -ListaResultante, -ListaNoRecorrida).
+Llena la lista original y la de salida de "X" hasta encontrar una X en la original, colocando inclusive la ultima "X", 
+tambien retorna la parte de la lista no recorrida.
+*/
 
-/*Si HayEspacio entonces procede a escribir la pista sino llamo otra vez a*/
+llenar_con_x([X | Lista], ["X" |ListaResultante], ListaResultante):-
+	X == "X".
 
-verificar_siguiente_espacio(Lista, Pista, ListaResultante, 1):-
-	rellenar_lista_izq_sin_hashtag(Lista,Pista , [Elem | ListaResultante], Numero, 1).
-	
-verificar_siguiente_espacio(Lista, Pista, ListaResultante, 0):-
-	/*rellenar_lista_izq_sin_hashtag(Lista, Pistas, ListaResultante, Numero, 0)*/
-	llenar_con_x(Lista, ListaResultante, ListaNoRecorrida),
-	verificar_espacio_pista(Lista, ListaNoRecorrida, HayEspacioPista).
+llenar_con_x([X | ColaLista], ["X" |ListaResultante], ListaSalidaNoRecorrida):-
+	X \== "X",
+	llenar_con_x(ColaLista,ListaResultante, ListaSalidaNoRecorrida).
 
-	
+/*
+proylcc: llenar_con_x(["X", _ , _ , _ , _ ], ListaSalida).
 
-verificar_espacio_pista_general(Lista, ListaRestante, EspacioPista, 1).  /*Finaliza en que encontro el espacio*/
+trace, proylcc: llenar_con_x(["X", _ , _ , _ , _ ], ListaSalida ).
 
-verificar_espacio_pista_general(Lista, ListaRestante, EspacioPista, 0):-	/*Como no encontro espacio lo llama a seguir buscando espacio*/
-	verificar_espacio_pista(Lista, ListaRestante, EspacioPista, HayEspacio).
-
-verificar_espacio_pista_general(Lista , ListaRestante, EspacioPista, HayEspacio):-
-	verificar_espacio_pista(Lista, ListaRestante, EspacioPista, HayEspacio).
+trace, proylcc: llenar_con_x([ _ , _ , "X" , _ , _ ], ListaSalida ).
+*/
 
 /*
 verificar_espacio_pista(+Lista, +EspacioPista, -ListaRestante, -HayEspacio)
 verifica si en la lista hay espacio para la pista
 EspacioPista es el numero de la pista o sea el espacio que ocupa la pista
+Pista es la pista original que servira en caso de que no haya espacio para la pista y haya q retornar la pista original
 HayEspacio sera 1 si es que hay espacio, 0 en caso contrario
 ListaRestante es la lista que hay que corroborar si tiene espacio o no en la proxima iteracion
 */
-verificar_espacio_pista([X | ListaRestante], ListaRestante, 0,1).					/*acepta q haya espacio para la pista*/
 
-verificar_espacio_pista([X | ListaRestante], ListaRestante, EspacioPista, 0):-		/*rechaza q haya espacio para la pista*/
-	X == "X".
-
-verificar_espacio_pista([X | ListaRestante], ListaRestante, EspacioPista , HayEspacio):-	/*verifica q haya espacio para la pista*/
+verificar_espacio_pista([X | ListaRestante], ListaSalida, EspacioPista, Pista, HayEspacio):-	
+	write("Entre al 1er verificar"),nl,
 	X \== "X",
+	EspacioPista >0,
 	EspacioPistaAux is EspacioPista -1,
-	verificar_espacio_pista([X | ListaRestante], ListaRestante, EspacioPistaAux, HayEspacio).
+	verificar_espacio_pista(ListaRestante, ListaSalida, EspacioPistaAux, Pista, HayEspacio).
 
-/*
-llenar_con_x(+Lista, -ListaResultante, -ListaNoRecorrida).
-Llena la lista de "X" hasta encontrar una X, colocando inclusive la ultima "X", tambien retorna la parte de la lista no recorrida.
+verificar_espacio_pista([X | ListaRestante], ListaSalida, 0, Pista, 1).					
+	write("Entre al 2do verificar"),nl.
+	
+
+verificar_espacio_pista([X | ListaRestante], ListaSalida, EspacioPista, Pista, 0):-		
+	write("Entre al 3er verificar"),nl,
+	chequear_pista(ListaRestante, ListaSalida, Pista, ListaRestante, 0).
+
+
+/*chequear_pista(+Lista,-ListaSalida, +Pista, -Listarestante, -HayEspacio)
+
+	Tiene q recorrer la lista hasta que encuentre espacio para la pista
+	si no hay espacio llena de "X" la lista de salida y vuelve a iterar sobre la lista restante original
+
+	termina cuando hay espacio para la pista, HayEspacio = 1 
+
+
 */
 
-llenar_con_x([X | Lista], [Elem |ListaResultante], ListaResultante):-
-	X == "X",
-	Elem is "X".
+chequear_pista(Lista, ListaSalida, Pista, ListaRestante, HayEspacio):-
+	verificar_espacio_pista(Lista, ListaSalida, Pista, Pista, HayEspacio).
 
-llenar_con_x([X | ColaLista], [Elem |ListaResultante], ListaNoRecorrida):-
-	X \== "X",
-	Elem is "X",
-	llenar_con_x(ColaLista,ListaResultante, ListaNoRecorrida).
+
+
+chequear_pista(Lista, ListaSalida, Pista, ListaRestante, 0):-		
+	llenar_con_x(Lista, ListaSalida, ListaSalidaNoRecorrida),
+	chequear_pista(ListaRestante, ListaSalidaNoRecorrida, Pista, ListaRestante, HayEspacio).
+
+
+
 
 /*
-casillas_a_rellenar(+Lista,-ListaNoRecorrida, +PistaAux, Pista, CantCasillas) 
-cuenta la cantidad de casillas a rellenar
-PistaAux va a servir para ir descontando el espacio q ocupa la pista a medida q se llenan las casillas
-Pista es la pista original
-CantCasillas sera la cantidad de casillas a rellenar, al iniciar es 0
+caso bueno tiene que dar q hay espacio:
+trace,proylcc: chequear_pista([ _ , _ , _ , _ , _ ], ListaSalida, 3, ListaRestante, HayEspacio).
+
+caso malo:
+trace,proylcc: chequear_pista([ _ , _ , "X" , _ , _ ], ListaSalida, 3, ListaRestante, HayEspacio).
 */
+
+/*
+Cuando se llame a solucionar_lista(+Lista, +Pistas, -ListaSalida, Numero)
+se le pasara como numero un "1" 
+Para todas las pistas:
+	Para la pista actual:
+		chequear si hay espacio:
+			Si hay espacio ent
+				colocar la pista
+			Si no hay espacio
+				tachar con "x"
+				repetir 
+
+*/
+
+solucionar_lista(Lista, [], ListaSalida, Numero).
+
+solucionar_lista(Lista, [Pista | ColaPistas], ListaSalida, Numero).
+	concatenar_char_numero('#',Numero, NumeroConHashtag),
+	chequear_pista(Lista, ListaSalida, Pista, ListaRestante, HayEspacio),
+	rellenar_lista_izq_sin_hashtag(Lista, Pista, ListaSalida, NumeroConHashtag),
+	NumeroAux is  Numero +1,
+	solucionar_lista(ListaRestante, ColaPistas, ListaSalida, NumeroAux).
+
+
+
+% Predicado para convertir un número a una cadena
+number_to_string(Number, String) :-
+    number_codes(Number, Codes),
+    atom_codes(String, Codes).
+
+% Predicado para concatenar un carácter y un número
+concatenar_char_numero(Char, Numero, Result) :-
+    atom_chars(Char, [CharCode]),  					% Convertir el carácter a su representación de código
+    number_to_string(Numero, NumeroString),  		% Convertir el número a una cadena
+    atom_concat(CharCode, NumeroString, Result). 	% Concatenar el carácter y la cadena
 
 
 
