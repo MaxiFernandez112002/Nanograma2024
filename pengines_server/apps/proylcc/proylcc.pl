@@ -458,7 +458,7 @@ solucionar_lista(Lista, [Pista | ColaPistas], ListaSalida, Numero, ListaSalidaFi
 	rellenar_lista_izq_sin_hashtag(ListaSalida, Pista, NumeroConHashtag),
 	NumeroAux is  Numero +1,
 	solucionar_lista(ListaOriginalRestante, ColaPistas, ListaSalidaRestante, NumeroAux, ListaSalidaTemporal),
-	append(ListaSalida,ListaSalidaRestante, ListaSalidaFinal).
+	append(ListaSalida,ListaSalidaTemporal, ListaSalidaFinal).
 
 
 
@@ -473,6 +473,7 @@ trace, proylcc: solucionar_lista([ _ , _ , _ , _ , _ , _ , _ , _ , _ ], [3,3], L
 trace, proylcc: solucionar_lista([ _ , _ , _ , _ , _ , _ , _ , _ , _ ], [3,3,1], ListaSalida, 1, ListaSalidaFinal).
 
 trace, proylcc: solucionar_lista([ _ , "X" , _ , _ , _ , _ , _ , _ , _ ], [1,1,1], ListaSalida, 1, ListaSalidaFinal).
+trace, proylcc: solucionar_lista([ _ , "X" , _ , _ , _ , _ , _ , _ , _ ], [1,1,1,1], ListaSalida, 1, ListaSalidaFinal).
 */
 
 % Predicado para convertir un número a una cadena
