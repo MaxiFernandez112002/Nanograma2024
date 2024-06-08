@@ -5,23 +5,20 @@ import Board from './Board';
 let pengine;
 
 function Game() {
-    // State
     const [grid, setGrid] = useState(null);
     const [rowsClues, setRowsClues] = useState(null);
     const [colsClues, setColsClues] = useState(null);
     const [waiting, setWaiting] = useState(false);
     const [filasSatisfechas, setFilasSatisfechas] = useState([]);
     const [columnasSatisfechas, setColumnasSatisfechas] = useState([]);
-    const [selectedContent, setSelectedContent] = useState('#'); // seteamos el contenido por default en '#'
-    const [gameOver, setGameOver] = useState(false); // Nuevo estado para controlar el fin del juego
-    const [statusText, setStatusText] = useState('MODO CLASICO'); // Estado para el texto de estado
-    const [showingSolution, setShowingSolution] = useState(false); // Estado para controlar la visualización de la solución
-    const [solutionGrid, setSolutionGrid] = useState(null); // Estado para la grilla solucionada
+    const [selectedContent, setSelectedContent] = useState('#');
+    const [gameOver, setGameOver] = useState(false);
+    const [statusText, setStatusText] = useState('MODO CLASICO');
+    const [showingSolution, setShowingSolution] = useState(false);
+    const [solutionGrid, setSolutionGrid] = useState(null);
+    const [previousGrid, setPreviousGrid] = useState(null);
 
     useEffect(() => {
-        // Creation of the pengine server instance.
-        // This is executed just once, after the first render.
-        // The callback will run when the server is ready, and it stores the pengine instance in the pengine variable.
         PengineClient.init(handleServerReady);
     }, []);
 
@@ -66,22 +63,19 @@ function Game() {
     }
 
     function handleClick(i, j, content) {
-        // No action on click if we are waiting or if the game is over.
         if (waiting || gameOver) {
             return;
         }
-        // Build Prolog query to make a move and get the new satisfaction status of the relevant clues.
-        const squaresS = JSON.stringify(grid).replaceAll('"_"', '_'); // Remove quotes for variables.
+
+        const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
         const rowsCluesS = JSON.stringify(rowsClues);
         const colsCluesS = JSON.stringify(colsClues);
         const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, NonogramaCompletado)`;
 
-        // Set waiting state to true while waiting for response from server.
         setWaiting(true);
-        // Send query to server using pengine instance.
+
         pengine.query(queryS, (success, response) => {
             if (success) {
-                // Update the grid with the new content.
                 setGrid(response['ResGrid']);
 
                 if (response['RowSat'] === 1)
@@ -96,11 +90,10 @@ function Game() {
             }
 
             if (response['NonogramaCompletado'] === 1) {
-                setGameOver(true); // El juego ha terminado
-                setStatusText("¡Felicidades! ¡Has ganado!"); // Cambiar el texto de estado
+                setGameOver(true);
+                setStatusText("¡Felicidades! ¡Has ganado!");
             }
 
-            // Set waiting state back to false after receiving response.
             setWaiting(false);
         });
     }
@@ -116,10 +109,13 @@ function Game() {
     function handleShowSolution() {
         setShowingSolution(!showingSolution);
         if (!showingSolution && solutionGrid) {
+            setPreviousGrid(grid); // Almacena la grilla actual antes de mostrar la solución
             setGrid(solutionGrid);
             setStatusText('MODO VER SOLUCION');
         } else {
-            handleServerReady(pengine);
+            if (previousGrid) {
+                setGrid(previousGrid); // Restaura la grilla desde el estado anterior
+            }
             setStatusText('MODO CLASICO');
         }
     }

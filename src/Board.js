@@ -2,9 +2,10 @@ import React from 'react';
 import Square from './Square';
 import Clue from './Clue';
 
-function Board({ grid, rowsClues, colsClues, onClick, filasSatisfechas, columnasSatisfechas}) {
+function Board({ grid, rowsClues, colsClues, onClick, filasSatisfechas, columnasSatisfechas, disableClicks }) {
     const numOfRows = grid.length;
     const numOfCols = grid[0].length;
+
     return (
         <div className="vertical">
             <div
@@ -12,18 +13,11 @@ function Board({ grid, rowsClues, colsClues, onClick, filasSatisfechas, columnas
                 style={{
                     gridTemplateRows: '60px',
                     gridTemplateColumns: `60px repeat(${numOfCols}, 40px)`
-                    /*
-                       60px  40px 40px 40px 40px 40px 40px 40px   (gridTemplateColumns)
-                      ______ ____ ____ ____ ____ ____ ____ ____
-                     |      |    |    |    |    |    |    |    |  60px
-                     |      |    |    |    |    |    |    |    |  (gridTemplateRows)
-                      ------ ---- ---- ---- ---- ---- ---- ---- 
-                     */
                 }}
             >
                 <div>{/* top-left corner square */}</div>
                 {colsClues.map((clue, i) =>
-                    <Clue clue={clue} satisfecha = {columnasSatisfechas[i] ? "satisfecha" : "insatisfecha"} key={i}  />
+                    <Clue clue={clue} satisfecha={columnasSatisfechas[i] ? "satisfecha" : "insatisfecha"} key={i} />
                 )}
             </div>
             <div className="horizontal">
@@ -32,11 +26,10 @@ function Board({ grid, rowsClues, colsClues, onClick, filasSatisfechas, columnas
                     style={{
                         gridTemplateRows: `repeat(${numOfRows}, 40px)`,
                         gridTemplateColumns: '60px'
-                        /* IDEM column clues above */
                     }}
                 >
                     {rowsClues.map((clue, i) =>
-                        <Clue clue={clue} satisfecha = {filasSatisfechas[i] ? "satisfecha" : "insatisfecha"} key={i} />
+                        <Clue clue={clue} satisfecha={filasSatisfechas[i] ? "satisfecha" : "insatisfecha"} key={i} />
                     )}
                 </div>
                 <div className="board"
@@ -49,7 +42,8 @@ function Board({ grid, rowsClues, colsClues, onClick, filasSatisfechas, columnas
                             <Square
                                 value={cell}
                                 onClick={() => onClick(i, j)}
-                                key={i + j}
+                                disableClicks={disableClicks}
+                                key={`${i}-${j}`}
                             />
                         )
                     )}
