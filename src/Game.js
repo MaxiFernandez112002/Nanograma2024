@@ -17,6 +17,8 @@ function Game() {
     const [showingSolution, setShowingSolution] = useState(false);
     const [solutionGrid, setSolutionGrid] = useState(null);
     const [previousGrid, setPreviousGrid] = useState(null);
+    const [revealingMode, setRevealingMode] = useState(false);
+
 
     useEffect(() => {
         PengineClient.init(handleServerReady);
@@ -66,45 +68,56 @@ function Game() {
         if (waiting || gameOver) {
             return;
         }
-
+    
         const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
         const rowsCluesS = JSON.stringify(rowsClues);
         const colsCluesS = JSON.stringify(colsClues);
-        const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, NonogramaCompletado)`;
+    
+        // Si estamos en modo de revelación y la celda está vacía
+        if (revealingMode) {
+            content = solutionGrid[i][j];
+            setGrid(grid);
+        }
 
-        setWaiting(true);
-
-        pengine.query(queryS, (success, response) => {
-            if (success) {
-                setGrid(response['ResGrid']);
-
-                if (response['RowSat'] === 1)
-                    filasSatisfechas[i] = 1;
-                else
-                    filasSatisfechas[i] = 0;
-
-                if (response['ColSat'] === 1)
-                    columnasSatisfechas[j] = 1;
-                else
-                    columnasSatisfechas[j] = 0;
-            }
-
-            if (response['NonogramaCompletado'] === 1) {
-                setGameOver(true);
-                setStatusText("¡Felicidades! ¡Has ganado!");
-            }
-
-            setWaiting(false);
-        });
+        if (!revealingMode || grid[i][j] !== solutionGrid[i][j]) {
+            // Consulta normal para poner contenido en la celda
+            const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, NonogramaCompletado)`;
+    
+            setWaiting(true);
+    
+            pengine.query(queryS, (success, response) => {
+                if (success) {
+                    setGrid(response['ResGrid']);
+    
+                    if (response['RowSat'] === 1)
+                        filasSatisfechas[i] = 1;
+                    else
+                        filasSatisfechas[i] = 0;
+    
+                    if (response['ColSat'] === 1)
+                        columnasSatisfechas[j] = 1;
+                    else
+                        columnasSatisfechas[j] = 0;
+                }
+    
+                if (response['NonogramaCompletado'] === 1) {
+                    setGameOver(true);
+                    setStatusText("¡Felicidades! ¡Has ganado!");
+                }
+    
+                setWaiting(false);
+            });
+        }
     }
 
     function handleToggleContent() {
         setSelectedContent(selectedContent === 'X' ? '#' : 'X');
     }
 
-    function handleAyuda() {
-       /*COMPLETAR*/ 
-    }
+   // Función para manejar el cambio de estado del modo de revelación
+    function handleToggleRevealingMode() {
+    setRevealingMode(!revealingMode);
+}
 
     function handleShowSolution() {
         setShowingSolution(!showingSolution);
@@ -141,7 +154,7 @@ function Game() {
             />
             <div>
                 <button className='boton-modo' onClick={handleToggleContent}>Cambiar a modo {selectedContent === 'X' ? '#' : 'X'}</button>
-                <button className='boton-revelar-celda' onClick={handleAyuda}>Revelar celda</button>
+                <button className='boton-revelar-celda' onClick={handleToggleRevealingMode}>Modo Revelación {revealingMode ? 'Desactivar' : 'Activar'}</button>
                 <button className='boton-reiniciar' onClick={handleRestart}>Reiniciar Juego</button>
                 <button className='boton-solucion' onClick={handleShowSolution}>{showingSolution ? 'Ocultar Solución' : 'Mostrar Solución'}</button>
             </div>
