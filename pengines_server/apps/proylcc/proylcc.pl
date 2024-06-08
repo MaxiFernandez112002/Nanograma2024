@@ -379,7 +379,8 @@ no_es_hashtag([]).
 % Dado un indice y un arreglo de pistas, se obtiene la pista corCumplepondiente.
 % obtener_pista(Index,Pista,Cumple).
 %
-obtener_pista(Index, Pista, Cumple):- nth0(Index, Pista, Cumple).
+obtener_pista(Indice, Pista, PistaSalida):- 
+	nth0(Indice, Pista, PistaSalida).
 
 /*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -416,8 +417,11 @@ verifica_pistas_columna(Grilla,Index,Length,[C|CSub],[Cumple|ColArray]):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determina si todos los elementos de la Lista son iguales a E
 % todas_iguales(Elemento,Lista).
-todas_iguales(_E,[]).
-todas_iguales(E,[X|Xs]):- X == E, todas_iguales(E,Xs).
+todas_iguales(_Elem,[]).
+
+todas_iguales(Elem,[X|Xs]):- 
+	X == Elem, 
+	todas_iguales(Elem,Xs).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Dada una pista se genera la posible solución que la satisface.
@@ -457,8 +461,7 @@ trace,proylcc: generar_posibles_soluciones([ _, "X" , _ , _ , _ ], [3]).
 % Se genera una fila con los movimiento que se sabe que son correctos.
 % fila_correcta(ListaActual,Pista,Longitud,Salida).
 fila_correcta(Actual,Pista,Longitud,Salida):-
-    findall(Actual,(length(Actual,Longitud),generar_posibles_soluciones(Actual,Pista)),Todas),
-    interseccion(Todas,Longitud,Salida).
+    findall(Actual,(length(Actual,Longitud),generar_posibles_soluciones(Actual,Pista)),Todas),interseccion(Todas,Longitud,Salida).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Es un método "cascara" en el cual a partir de una lista de listas, se obtiene en Salida la intersección de las mismas.
