@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import PengineClient from './PengineClient';
 import Board from './Board';
@@ -16,6 +15,8 @@ function Game() {
     const [selectedContent, setSelectedContent] = useState('#'); // seteamos el contenido por default en '#'
     const [gameOver, setGameOver] = useState(false); // Nuevo estado para controlar el fin del juego
     const [statusText, setStatusText] = useState('MODO CLASICO'); // Estado para el texto de estado
+    const [showingSolution, setShowingSolution] = useState(false); // Estado para controlar la visualización de la solución
+    const [solutionGrid, setSolutionGrid] = useState(null); // Estado para la grilla solucionada
 
     useEffect(() => {
         // Creation of the pengine server instance.
@@ -29,25 +30,37 @@ function Game() {
         const queryS = 'init(RowClues, ColumClues, Grid)';
         pengine.query(queryS, (success, response) => {
             if (success) {
-
-                setGrid(response['Grid']);
+                const initialGrid = response['Grid'];
+                setGrid(initialGrid);
                 setRowsClues(response['RowClues']);
                 setColsClues(response['ColumClues']);
-
                 
                 const rowsCluesS = JSON.stringify(response['RowClues']);
                 const colsCluesS = JSON.stringify(response['ColumClues']);
-                const squaresS = JSON.stringify(response['Grid']).replaceAll('"_"', '_');
-                
+                const squaresS = JSON.stringify(initialGrid).replaceAll('""', '_');
+                const squaresX = JSON.stringify(initialGrid).replaceAll('"_"', '_');
+
+                const querySolution = `solucion(${squaresX}, ${rowsCluesS}, ${colsCluesS}, GrillaSolucionada)`;
+                pengine.query(querySolution, (success, responsepz) => {
+                    if (success) {
+                        console.log("Grilla Solucionada:", responsepz["GrillaSolucionada"]);
+                        setSolutionGrid(responsepz["GrillaSolucionada"]);
+                    } else {
+                        console.error("Error al obtener la grilla solucionada:", responsepz);
+                    }
+                });
+
                 const queryG = `comprobar_grilla_react(${squaresS}, ${rowsCluesS}, ${colsCluesS}, FilaConPistasInvertida, ColumnaConPistasInvertida)`; 
                 pengine.query(queryG, (success, responsep) => {
                     if (success) {
                         setFilasSatisfechas(responsep['FilaConPistasInvertida']);
                         setColumnasSatisfechas(responsep['ColumnaConPistasInvertida']);
+                    } else {
+                        console.error("Error al comprobar la grilla:", responsep);
                     }
-
                 });
-  
+            } else {
+                console.error("Error al inicializar el juego:", response);
             }
         });
     }
@@ -83,7 +96,6 @@ function Game() {
             }
 
             if (response['NonogramaCompletado'] === 1) {
-                //alert("¡Felicidades! ¡Has ganado!");
                 setGameOver(true); // El juego ha terminado
                 setStatusText("¡Felicidades! ¡Has ganado!"); // Cambiar el texto de estado
             }
@@ -91,7 +103,6 @@ function Game() {
             // Set waiting state back to false after receiving response.
             setWaiting(false);
         });
-
     }
 
     function handleToggleContent() {
@@ -103,9 +114,15 @@ function Game() {
     }
 
     function handleShowSolution() {
-        /*COMPLETAR*/ 
+        setShowingSolution(!showingSolution);
+        if (!showingSolution && solutionGrid) {
+            setGrid(solutionGrid);
+            setStatusText('MODO VER SOLUCION');
+        } else {
+            handleServerReady(pengine);
+            setStatusText('MODO CLASICO');
+        }
     }
-
 
     if (!grid) {
         return null;
@@ -124,12 +141,13 @@ function Game() {
                 onClick={(i, j) => handleClick(i, j, selectedContent)}
                 filasSatisfechas={filasSatisfechas}
                 columnasSatisfechas={columnasSatisfechas}
+                disableClicks={showingSolution} // Deshabilitar clics si se está mostrando la solución
             />
             <div>
                 <button className='boton-modo' onClick={handleToggleContent}>Cambiar a modo {selectedContent === 'X' ? '#' : 'X'}</button>
-                <button className='boton-ayuda' onClick={handleAyuda}>Revelar celda</button>
+                <button className='boton-revelar-celda' onClick={handleAyuda}>Revelar celda</button>
                 <button className='boton-reiniciar' onClick={handleRestart}>Reiniciar Juego</button>
-                <button className='boton-solucion' onClick={handleShowSolution}>Mostrar Solución</button>
+                <button className='boton-solucion' onClick={handleShowSolution}>{showingSolution ? 'Ocultar Solución' : 'Mostrar Solución'}</button>
             </div>
             <div className="game-info">
                 {statusText}
@@ -138,5 +156,4 @@ function Game() {
     );
 }
 
-export default Game; 
-
+export default Game;

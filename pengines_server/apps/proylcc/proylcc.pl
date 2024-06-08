@@ -314,6 +314,7 @@ comprobar_grilla_react(Grilla, PistasFilas, PistasCol, FilaConPistas, ColumnaCon
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
 % Determina si una fila o columna satisface su pista corCumplepondiente.
 % checkPista(Fila/Columna,PistasFilas/PistasColumnas,Cumple).
 % Se utiliza una "cascara" que se encarga de omitir los elementos que no son # y luego se usa verifica_pista_aux
@@ -365,6 +366,59 @@ verifica_pista_aux(ColaLista,[0],Cumple).
 
 % Cualquier otro caso es falso.
 verifica_pista_aux(_,_,0).
+*/
+
+verifica_pista([Elem],[0],1):- 
+    no_es_hashtag(Elem),
+    !.
+verifica_pista([],[0],1):- !.
+verifica_pista([],[],1):- !.
+% Si el elemento es vacío entonces se llama con el siguiente elemento de la lista.
+verifica_pista([Elem|ColaLista],Pista,Cumple):- 
+    no_es_hashtag(Elem),
+    verifica_pista(ColaLista,Pista,Cumple),
+    !.
+% Si es el elemento no es vacío, se encarga verifica_pista_aux.
+verifica_pista([Elem|ColaLista],Pista,Cumple):- 
+    Elem == "#",
+    verifica_pista_aux([Elem|ColaLista],Pista,Cumple),
+    !.
+% Cualquier otro caso es falso.
+verifica_pista(_,_,0).
+
+/*
+proylcc: verifica_pista([_,"X",_,_,_],[3], Cumple).
+proylcc: verifica_pista([_,"#","#","#",_],[3], Cumple).
+*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Determina si una fila o columna satisface su pista corCumplepondiente, esta fila o columna debe comenzar con un elemento no "vacío"
+% verifica_pista_aux(Fila/Columna,PistasFilas/PistasColumnas,Cumple).
+% Si queda un solo elemento y no hay mas pistas que satisfacer entonces debe ser vacio.
+
+verifica_pista_aux([Elem],[0],1):- 
+    no_es_hashtag(Elem),
+    !.
+% Si no queda ningún elemento y no hay mas pistas que satisfacer entonces satisface.
+verifica_pista_aux([],[0],1):- !.
+% Si el elemento es #, entonces se decrementa el valor de la pista y se llama recursivamente con el siguiente elemento de la fila o columna.
+verifica_pista_aux([Elem|ColaLista],[Pista|ColaPista],Cumple):-
+    Elem == "#",
+    PistaAux is (Pista-1),
+    verifica_pista_aux(ColaLista,[PistaAux|ColaPista],Cumple),
+    !.
+% Si el elemento es vacío y el valor de la pista está en 0, significa que cumplió con al menos una parte de las pistas, entonces se llama con la parte siguiente. ___________________________________________________________________________________________________________________
+verifica_pista_aux([Elem|ColaLista],[Pista|ColaPista],Cumple):-
+    no_es_hashtag(Elem),
+    Pista is 0,
+    verifica_pista(ColaLista,ColaPista,Cumple),
+    !.
+% Si se alcanza este caso significa que no hay más pistas que Cumpleolver, por lo que todos los elementos que quedan deben estar vacíos.
+verifica_pista_aux([Elem|ColaLista],[],Cumple):- 
+    no_es_hashtag(Elem), 
+    verifica_pista_aux(ColaLista,[0],Cumple),
+    !.
+% Cualquier otro caso es falso.
+verifica_pista_aux(_,_,0).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -403,6 +457,7 @@ obtener_fila(Grilla,RowN,Cumple):- nth0(RowN, Grilla, Cumple).
 % verifica_pistas_columna(Grilla,Length,Length,ColPista,Cumple).
 
 % Si la longitud es igual al contador entonces no hay que "recorrer" más.
+/*
 verifica_pistas_columna(_Grilla,Length,Length,_ColPista,[]).
 
 % Caso recursivo, si el contador no es igual a la longitud, entonces se obtiene la fila del contador, se verifica que esté bien y se obtiene para el Completo de filas
@@ -412,6 +467,17 @@ verifica_pistas_columna(Grilla,Indice,Length,[PistaCol|ColaPistasCol],[PistaCump
     verifica_pista(Col,PistaCol,PistaCumplida),
     IndiceAux is Indice + 1,
     verifica_pistas_columna(Grilla,IndiceAux,Length,ColaPistasCol,ColaPistasCumplidas).
+*/
+verifica_pistas_columna(_Grilla,Length,Length,_ColPista,[]) :- !.
+
+% Caso recursivo, si el contador no es igual a la longitud, entonces se obtiene la fila del contador, se verifica que esté bien y se obtiene para el Completo de filas
+verifica_pistas_columna(Grilla,Indice,Length,[PistaCol|ColaPistasCol],[PistaCumplida|ColaPistasCumplidas]):-
+    not(Indice is Length),
+    obtener_columna(Grilla,Indice,Col),
+    verifica_pista(Col,PistaCol,PistaCumplida),
+    IndiceAux is Indice + 1,
+    verifica_pistas_columna(Grilla,IndiceAux,Length,ColaPistasCol,ColaPistasCumplidas),
+    !.
 
 
 
@@ -427,7 +493,7 @@ todas_iguales(Elem,[X|Xs]):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Dada una pista se genera la posible solución que la satisface.
 % generar_posibles_soluciones(ListaPosible,Pista).
-
+/*
 %Caso base
 generar_posibles_soluciones([],[]).
 %Caso recursivo: insertamos en la lista a devolver un "#" y llamamos al metodo auxiliar.
@@ -448,6 +514,34 @@ generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):-
 	Elem = "X", 
 	Pista is 0, 
 	generar_posibles_soluciones(ColaLista,ColaPista).
+*/
+generar_posibles_soluciones([],[]) :- !.
+% Caso recursivo: insertamos en la lista a devolver un "#" y llamamos al método auxiliar.
+generar_posibles_soluciones([Elem|ColaLista],Pista):- 
+    Elem = "#", 
+    generar_posibles_soluciones_aux([Elem|ColaLista],Pista),
+    !.
+
+generar_posibles_soluciones([Elem|ColaLista],Pista):- 
+    Elem = "X", 
+    generar_posibles_soluciones(ColaLista,Pista),
+    !.
+
+% Caso base: si la lista está vacía y las pistas ya son 0.
+generar_posibles_soluciones_aux([],[0]) :- !.
+% Caso recursivo, insertamos en la lista a devolver un "#" y si la pista no es 0, entonces llamamos recursivamente.
+generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):- 
+    Elem = "#",
+    Pista \= 0, 
+    PistaAux is Pista-1, 
+    generar_posibles_soluciones_aux(ColaLista,[PistaAux|ColaPista]),
+    !.
+
+generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):- 
+    Elem = "X", 
+    Pista is 0, 
+    generar_posibles_soluciones(ColaLista,ColaPista),
+    !.
 
 
 /*
@@ -476,31 +570,32 @@ interseccion(Posibles,Longitud,Salida):-
 % El parametro almacenado empieza vacío si es la primer llamada.
 % interseccionAux(Posibles,Longitud,Almacenado,Salida).
 
+interseccion_aux(_, -1, Aux, Aux) :- !.
 
-interseccion_aux(_,-1,Aux,Aux).
+interseccion_aux(_, -1, _, _) :- !.
 
-interseccion_aux(_,-1,_,_).
+interseccion_aux(Posibles, N, LAux, Salida):- 
+    obtener_columna(Posibles, N, Iesimos),  % Obtenemos de cada lista posible el elemento N
+    todas_iguales("X", Iesimos),   
+    append(["X"], LAux, Aux),   % Si todos son X, entonces lo agregamos a la lista acumulado
+    NAux is N - 1,
+    interseccion_aux(Posibles, NAux, Aux, Salida),
+    !.
 
+interseccion_aux(Posibles, N, LAux, Salida):- 
+    obtener_columna(Posibles, N, Iesimos),   % Obtenemos de cada lista posible el elemento N
+    todas_iguales("#", Iesimos), 
+    append(["#"], LAux, Aux),   % Si todos son #, entonces lo agregamos a la lista acumulado
+    NAux is N - 1,
+    interseccion_aux(Posibles, NAux, Aux, Salida),
+    !.
 
-interseccion_aux(Posibles,N,LAux,Salida):- 
-    obtener_columna(Posibles,N,Iesimos),  %Obtenemos de cada lista posible el elemento N
-    todas_iguales("X",Iesimos),   
-    append(["X"],LAux,Aux),   %Si todos son X, entonces lo agregamos a la lista acumulado
-    NAux is N -1,
-    interseccion_aux(Posibles,NAux,Aux,Salida).
-
-interseccion_aux(Posibles,N,LAux,Salida):- 
-    obtener_columna(Posibles,N,Iesimos),   %Obtenemos de cada lista posible el elemento N
-    todas_iguales("#",Iesimos), 
-    append(["#"],LAux,Aux),   %Si todos son #, entonces lo agregamos a la lista acumulado
-    NAux is N -1,
-    interseccion_aux(Posibles,NAux,Aux,Salida).
-
-%Si hay alguna distinta
-interseccion_aux(Posibles,N,In,Out):-
-    append([_],In,Aux), %Agrego al final de la lista.
-    NAux is N-1,
-    interseccion_aux(Posibles,NAux,Aux,Out).
+% Si hay alguna distinta
+interseccion_aux(Posibles, N, In, Out):-
+    append([_], In, Aux), % Agrego al final de la lista.
+    NAux is N - 1,
+    interseccion_aux(Posibles, NAux, Aux, Out),
+    !.
 
 
 
@@ -528,30 +623,33 @@ cumple_condicion([Pista|ColaPistas],Longitud):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Método cascara el cual a partir de una grilla genera una nueva con las pistas que satisfacen cumple_condicion(Pista,Longitud)
 % primer_pasada(Grilla,PistaFila,PistasColumna,GrillaSalida).
-primer_pasada(Grilla,PistasFila,PistasColumna,GrillaFinal):-
-    length(PistasFila,LongitudFilas),
-    primer_pasada_aux(Grilla, PistasFila, GrillaSalidaFilas,LongitudFilas),
- 	transpose(GrillaSalidaFilas, GrillaTraspuesta),
-    length(PistasFila,LongitudColumnas),
-    primer_pasada_aux(GrillaTraspuesta, PistasColumna, GrillaSalidaColumnas,LongitudColumnas),
+primer_pasada(Grilla, PistasFila, PistasColumna, GrillaFinal):-
+    length(PistasFila, LongitudFilas),
+    primer_pasada_aux(Grilla, PistasFila, GrillaSalidaFilas, LongitudFilas),
+    transpose(GrillaSalidaFilas, GrillaTraspuesta),
+    length(PistasColumna, LongitudColumnas),
+    primer_pasada_aux(GrillaTraspuesta, PistasColumna, GrillaSalidaColumnas, LongitudColumnas),
     transpose(GrillaSalidaColumnas, GrillaFinal).
 
-    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Método auxiliar que sirve para generar el método primera pasada.
-% primer_pasadaAux(Grilla,Pista,Salida,Longitud).
+% primer_pasada_aux(Grilla, Pista, Salida, Longitud).
 
-%Caso Base: No hay pistas para analizar
-primer_pasada_aux(_,[],[],_).
-%Casos recursivo 1: Cumple con la condicion de primer_pasada.
-primer_pasada_aux([Fila|ColaFila],[Pista|ColaPista],[FilaSalida|ColaSalida],Longitud):-
-	cumple_condicion(Pista,Longitud),
-	fila_correcta(Fila,Pista,Longitud,FilaSalida),
-	primer_pasada_aux(ColaFila,ColaPista,ColaSalida,Longitud).
-	
-%Caso recursivo 2: No cumple con la condicion.
-primer_pasada_aux([Fila|ColaFila],[_Pista|ColaPista],[Fila|ColaSalida],Longitud):-
-	primer_pasada_aux(ColaFila,ColaPista,ColaSalida,Longitud).
+% Caso Base: No hay pistas para analizar
+primer_pasada_aux(_, [], [], _) :- !.
+
+% Caso recursivo 1: Cumple con la condición de primer_pasada.
+primer_pasada_aux([Fila|ColaFila], [Pista|ColaPista], [FilaSalida|ColaSalida], Longitud):-
+    cumple_condicion(Pista, Longitud),
+    fila_correcta(Fila, Pista, Longitud, FilaSalida),
+    primer_pasada_aux(ColaFila, ColaPista, ColaSalida, Longitud),
+    !.
+    
+% Caso recursivo 2: No cumple con la condición.
+primer_pasada_aux([Fila|ColaFila], [_Pista|ColaPista], [Fila|ColaSalida], Longitud):-
+    primer_pasada_aux(ColaFila, ColaPista, ColaSalida, Longitud),
+    !.
+
 
 
 
@@ -561,52 +659,63 @@ primer_pasada_aux([Fila|ColaFila],[_Pista|ColaPista],[Fila|ColaSalida],Longitud)
 % segunda_pasada(GrillaIn,PistaFila,PistasColumna,GrillaSalida).
 
 %Caso base, la grilla está completa.
-segunda_pasada(GrillaIn, PistasFila, _PistasColumna,GrillaIn):-
-    length(PistasFila,L),
-    grilla_completa(GrillaIn,L).
+segunda_pasada(GrillaIn, PistasFila, _PistasColumna, GrillaIn):-
+    length(PistasFila, L),
+    grilla_completa(GrillaIn, L),
+    !.
 
-%Caso recursivo
-segunda_pasada(GrillaIn, PistasFila, PistasColumna,GrillaOut):-
-    %%Calculo grilla cautas.
-   grilla_correcta(GrillaIn,PistasFila,PistasColumna,GrillaAux),(
-        %Si son iguales, asigno el valor de salida.                                                  
-          (grillas_iguales(GrillaIn,GrillaAux), GrillaOut = GrillaAux);
-        %Sino, vuelvo a llamar.
-          segunda_pasada(GrillaAux,PistasFila,PistasColumna,GrillaOut)
-   ).
+% Caso recursivo
+segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
+    %% Calculo grilla cautas.
+    grilla_correcta(GrillaIn, PistasFila, PistasColumna, GrillaAux),
+    (
+        % Si son iguales, asigno el valor de salida.                                                  
+        grillas_iguales(GrillaIn, GrillaAux),
+        GrillaOut = GrillaAux,
+        !; % Este corte asegura que si se encuentra una igualdad, no se busca más.
+        
+        % Si no, vuelvo a llamar.
+        segunda_pasada(GrillaAux, PistasFila, PistasColumna, GrillaOut)
+    ),
+    !.
+
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determina si dos grillas son iguales
 % grillas_iguales(Grilla1,Grilla2).
-grillas_iguales([], []).
+grillas_iguales([], []) :- !.
 grillas_iguales([Fila1|Subgrilla1], [Fila2|Subgrilla2]):-
-      filas_iguales(Fila1, Fila2),
-      grillas_iguales(Subgrilla1, Subgrilla2).
+    filas_iguales(Fila1, Fila2),
+    grillas_iguales(Subgrilla1, Subgrilla2),
+    !.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Determina si dos filas son iguales
-% grillas_iguales(Fila1,Fila2).
-filas_iguales([], []).
-filas_iguales([Elemento1|Subfila1],[Elemento2|Subfila2]):-
-      var(Elemento1),
-      var(Elemento2),
-      filas_iguales(Subfila1, Subfila2).
+% filas_iguales(Fila1, Fila2).
+filas_iguales([], []) :- !.
+filas_iguales([Elemento1|Subfila1], [Elemento2|Subfila2]):-
+    var(Elemento1),
+    var(Elemento2),
+    filas_iguales(Subfila1, Subfila2),
+    !.
 
 filas_iguales([Elemento1|Subfila1], [Elemento2|Subfila2]):-
-      Elemento1 == Elemento2,
-      filas_iguales(Subfila1, Subfila2).
-
-
+    Elemento1 == Elemento2,
+    filas_iguales(Subfila1, Subfila2),
+    !.
 
 % Determina si una grilla está completa.
-% grilla_completa(Grilla,Indice).
-grilla_completa(_,0).
-grilla_completa(Grilla,Indice):-
+% grilla_completa(Grilla, Indice).
+grilla_completa(_, 0) :- !.
+grilla_completa(Grilla, Indice):-
     IndiceAux is Indice - 1,
-    obtener_fila(Grilla,IndiceAux,Fila), 
+    obtener_fila(Grilla, IndiceAux, Fila), 
     elementos_instanciados(Fila),
-    grilla_completa(Grilla,IndiceAux).
+    grilla_completa(Grilla, IndiceAux),
+    !.
+
             
 
 
@@ -622,30 +731,29 @@ elementos_instanciados([X|Xs]):-
 
 % Genera una grilla con los movimientos que son correctos
 % grilla_correcta(Grilla,PistasFilas,PistasColumnas,Salida).  
-grilla_correcta(Grilla,PistasFilas,PistasColumnas,Salida):-
-    length(PistasFilas,LengthFC),
-	generar_filas_correctas(Grilla,PistasFilas,GrillasFilasCautas,0,LengthFC),
+grilla_correcta(Grilla, PistasFilas, PistasColumnas, Salida):-
+    length(PistasFilas, LengthFC),
+    generar_filas_correctas(Grilla, PistasFilas, GrillasFilasCautas, 0, LengthFC),
     transpose(GrillasFilasCautas, Traspuesta),
-    length(PistasColumnas,LengthPC),
-	generar_filas_correctas(Traspuesta,PistasColumnas,GrillasColumnasCautas,0,LengthPC),
-    transpose(GrillasColumnasCautas,Salida),!.
-                 
-
-
+    length(PistasColumnas, LengthPC),
+    generar_filas_correctas(Traspuesta, PistasColumnas, GrillasColumnasCautas, 0, LengthPC),
+    transpose(GrillasColumnasCautas, Salida),
+    !.
 
 % Genera una fila con los movimientos que son correctos a partir de una grilla dada.
-% generar_filas_correctas(Grilla,PistasFilas,Salida,Indice,Longitud).                   
+% generar_filas_correctas(Grilla, PistasFilas, Salida, Indice, Longitud).
 
+generar_filas_correctas(_, _, [], Length, Length) :- !.
 
-generar_filas_correctas(_Grilla,_Pistas,[],Length,Length).
-
-generar_filas_correctas(Grilla,Pistas,[FilaCorrecta|GrillaCorrecta],Indice,Length):-
-    obtener_fila(Grilla,Indice,Fila),
-    obtener_pista(Indice,Pistas,PistaObtenida),
-    length(Fila,L),
-    fila_correcta(Fila,PistaObtenida,L,FilaCorrecta),
+generar_filas_correctas(Grilla, Pistas, [FilaCorrecta|GrillaCorrecta], Indice, Length):-
+    obtener_fila(Grilla, Indice, Fila),
+    obtener_pista(Indice, Pistas, PistaObtenida),
+    length(Fila, L),
+    fila_correcta(Fila, PistaObtenida, L, FilaCorrecta),
     IndiceAux is Indice + 1, 
-    generar_filas_correctas(Grilla,Pistas,GrillaCorrecta,IndiceAux,Length).
+    generar_filas_correctas(Grilla, Pistas, GrillaCorrecta, IndiceAux, Length),
+    !.
+
     
 
 
@@ -653,37 +761,47 @@ generar_filas_correctas(Grilla,Pistas,[FilaCorrecta|GrillaCorrecta],Indice,Lengt
 % ultima_pasada(Grilla,PistasFilas,PistasColumna,Salida).                   
 
 ultima_pasada(Grilla, PistasFila, PistasCol, GrillaSalida):-
-	ultima_pasada_aux(Grilla, PistasFila, PistasCol, [], GrillaSalida).
+    ultima_pasada_aux(Grilla, PistasFila, PistasCol, [], GrillaSalida),
+    !.
 
+% Método auxiliar utilizado por ultima_pasada(Grilla, PistasFilas, PistasColumna, Salida). 
+% ultima_pasada_aux(GrillaIN, PistasFilas, PistasColumna, Acumulado, Salida). 
+ultima_pasada_aux(_Grilla, [], PistasColumna, Acumulado, GrillaSalida):-
+    length(PistasColumna, LengthCol),
+    verifica_pistas_columna(Acumulado, 0, LengthCol, PistasColumna, CheckColumna),
+    todas_iguales(1, CheckColumna),
+    GrillaSalida = Acumulado,
+    !.
 
-
-% Método auxiliar que es utilizado por ultima_pasada(Grilla,PistasFilas,PistasColumna,Salida). 
-% ultima_pasada_aux(GrillaIN,PistasFilas,PistasColumna,Acumulado,Salida). 
-ultima_pasada_aux(_Grilla,[],PistasColumna,Acumulado,GrillaSalida):-
-    length(PistasColumna,LengthCol),
-    verifica_pistas_columna(Acumulado,0,LengthCol,PistasColumna,CheckColumna),
-    todas_iguales(1,CheckColumna),
-    GrillaSalida = Acumulado.
-
-ultima_pasada_aux([Fila|Completo],[_Pista|ColaPistas],PistasColumna,Acumulado,GrillaSalida):- 
-	forall(member(Elem,Fila), not(var(Elem))),
+ultima_pasada_aux([Fila|Completo], [_Pista|ColaPistas], PistasColumna, Acumulado, GrillaSalida):- 
+    forall(member(Elem, Fila), nonvar(Elem)),
     append(Acumulado, [Fila], ListaAux),
-    ultima_pasada_aux(Completo,ColaPistas, PistasColumna, ListaAux, GrillaSalida).
+    ultima_pasada_aux(Completo, ColaPistas, PistasColumna, ListaAux, GrillaSalida),
+    !.
 
 ultima_pasada_aux([Fila|ColaFilas], [PrimeraPistaFila|ColaPistasFila], PistasCol, Acumulado, GrillaSalida):-
-	generar_posibles_soluciones(Fila,PrimeraPistaFila), 
-	append(Acumulado, [Fila], ListaAux),
-	ultima_pasada_aux(ColaFilas, ColaPistasFila, PistasCol, ListaAux, GrillaSalida).
+    generar_posibles_soluciones(Fila, PrimeraPistaFila), 
+    append(Acumulado, [Fila], ListaAux),
+    ultima_pasada_aux(ColaFilas, ColaPistasFila, PistasCol, ListaAux, GrillaSalida),
+    !.
+
 
 
 
 % solucion(+Grilla,+PistasFilas,+PistasColumna,-Salida). 
-solucion(Grilla,PistasFila,PistasColumna,GrillaFinal):-
-    primer_pasada(Grilla,PistasFila,PistasColumna,GrillaPrimerPasada),
-    segunda_pasada(GrillaPrimerPasada, PistasFila, PistasColumna,GrillaSegundaPasada),
-    ultima_pasada(GrillaSegundaPasada, PistasFila, PistasColumna, GrillaFinal).
+solucion(Grilla, PistasFila, PistasColumna, GrillaFinal):-
+    primer_pasada(Grilla, PistasFila, PistasColumna, GrillaPrimerPasada),
+    !,
+    segunda_pasada(GrillaPrimerPasada, PistasFila, PistasColumna, GrillaSegundaPasada),
+    !,
+    ultima_pasada(GrillaSegundaPasada, PistasFila, PistasColumna, GrillaFinal),
+    !.
+
 
 /*
+
+proylcc: solucion([["X","_","_","_","_"],["X","_","X","_","_"],["X","_","_","_","_"],["#","#","#","#","#"],["#","#","#","#","#"]], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], GrillaSolucionada).
+
 proylcc: generar_posibles_soluciones(Lista, [3]).
 
 proylcc: solucion(
