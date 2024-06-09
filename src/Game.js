@@ -18,6 +18,8 @@ function Game() {
     const [solutionGrid, setSolutionGrid] = useState(null);
     const [previousGrid, setPreviousGrid] = useState(null);
     const [revealingMode, setRevealingMode] = useState(false);
+    const [revelarCeldaColor, setRevelarCeldaColor] = useState('#ece274'); // Inicializa con el color original
+
 
 
     useEffect(() => {
@@ -117,6 +119,8 @@ function Game() {
    // Función para manejar el cambio de estado del modo de revelación
     function handleToggleRevealingMode() {
     setRevealingMode(!revealingMode);
+    setRevelarCeldaColor(revelarCeldaColor === '#ece274' ? '#90EE90' : '#ece274');
+    setRevealingMode(!revealingMode);
 }
 
     function handleShowSolution() {
@@ -154,7 +158,7 @@ function Game() {
             />
             <div>
                 <button className='boton-modo' onClick={handleToggleContent}>Cambiar a modo {selectedContent === 'X' ? '#' : 'X'}</button>
-                <button className='boton-revelar-celda' onClick={handleToggleRevealingMode}>Modo Revelación {revealingMode ? 'Desactivar' : 'Activar'}</button>
+                <button className='boton-revelar-celda' style={{ backgroundColor: revelarCeldaColor }} onClick={handleToggleRevealingMode}>Revelar celda {revealingMode ? 'Desactivar' : 'Activar'}</button>
                 <button className='boton-reiniciar' onClick={handleRestart}>Reiniciar Juego</button>
                 <button className='boton-solucion' onClick={handleShowSolution}>{showingSolution ? 'Ocultar Solución' : 'Mostrar Solución'}</button>
             </div>
