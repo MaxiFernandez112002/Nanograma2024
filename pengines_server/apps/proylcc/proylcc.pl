@@ -1,4 +1,4 @@
-:-module(proylcc,[ put/9 ]).
+:-module(proylcc,[ put/9, solucion/4, comprobar_grilla_react/5 ]).
 
 :-use_module(library(lists)).
 :- use_module(library(clpfd)).
@@ -270,13 +270,11 @@ verifica_pista([],[],1):- !.
 
 verifica_pista([Elem|ColaLista],Pista,Cumple):- 
     no_esta_instanciado(Elem),
-    verifica_pista(ColaLista,Pista,Cumple),
-    !.
+    verifica_pista(ColaLista,Pista,Cumple).
 
 verifica_pista([Elem|ColaLista],Pista,Cumple):- 
     Elem == "#",
-    verifica_pista_aux([Elem|ColaLista],Pista,Cumple),
-    !.
+    verifica_pista_aux([Elem|ColaLista],Pista,Cumple).
 
 verifica_pista(_,_,0).
 
@@ -299,19 +297,16 @@ verifica_pista_aux([],[0],1):- !.
 verifica_pista_aux([Elem|ColaLista],[Pista|ColaPista],Cumple):-
     Elem == "#",
     PistaAux is Pista-1,
-    verifica_pista_aux(ColaLista,[PistaAux|ColaPista],Cumple),
-    !.
+    verifica_pista_aux(ColaLista,[PistaAux|ColaPista],Cumple).
 
 verifica_pista_aux([Elem|ColaLista],[Pista|ColaPista],Cumple):-
     no_esta_instanciado(Elem),
     Pista is 0,
-    verifica_pista(ColaLista,ColaPista,Cumple),
-    !.
+    verifica_pista(ColaLista,ColaPista,Cumple).
 
 verifica_pista_aux([Elem|ColaLista],[],Cumple):- 
     no_esta_instanciado(Elem), 
-    verifica_pista_aux(ColaLista,[0],Cumple),
-    !.
+    verifica_pista_aux(ColaLista,[0],Cumple).
 
 verifica_pista_aux(_,_,0).
 
@@ -341,8 +336,7 @@ verifica_pistas_columna(Grilla,Indice,Longitud,[PistaCol|ColaPistasCol],[PistaCu
     obtener_columna(Grilla,Indice,Col),
     verifica_pista(Col,PistaCol,PistaCumplida),
     IndiceAux is Indice + 1,
-    verifica_pistas_columna(Grilla,IndiceAux,Longitud,ColaPistasCol,ColaPistasCumplidas),
-    !.
+    verifica_pistas_columna(Grilla,IndiceAux,Longitud,ColaPistasCol,ColaPistasCumplidas).
 
 
 % todas_iguales(+Elemento,+Lista).
@@ -361,13 +355,11 @@ generar_posibles_soluciones([],[]) :- !.
 
 generar_posibles_soluciones([Elem|ColaLista],Pista):- 
     Elem = "#", 
-    generar_posibles_soluciones_aux([Elem|ColaLista],Pista),
-    !.
+    generar_posibles_soluciones_aux([Elem|ColaLista],Pista).
 
 generar_posibles_soluciones([Elem|ColaLista],Pista):- 
     Elem = "X", 
-    generar_posibles_soluciones(ColaLista,Pista),
-    !.
+    generar_posibles_soluciones(ColaLista,Pista).
 
 /*
 generar_posibles_soluciones_aux(-Lista,+Pistas)
@@ -379,14 +371,12 @@ generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):-
     Elem = "#",
     Pista \= 0, 
     PistaAux is Pista-1, 
-    generar_posibles_soluciones_aux(ColaLista,[PistaAux|ColaPista]),
-    !.
+    generar_posibles_soluciones_aux(ColaLista,[PistaAux|ColaPista]).
 
 generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):- 
     Elem = "X", 
     Pista is 0, 
-    generar_posibles_soluciones(ColaLista,ColaPista),
-    !.
+    generar_posibles_soluciones(ColaLista,ColaPista).
 
 
 /*
@@ -423,22 +413,19 @@ interseccion_aux(Posibles, N, LAux, Salida):-
     todas_iguales("X", Iesimos),   
     append(["X"], LAux, Aux),   
     NAux is N - 1,
-    interseccion_aux(Posibles, NAux, Aux, Salida),
-    !.
+    interseccion_aux(Posibles, NAux, Aux, Salida).
 
 interseccion_aux(Posibles, N, LAux, Salida):- 
     obtener_columna(Posibles, N, Iesimos),   
     todas_iguales("#", Iesimos), 
     append(["#"], LAux, Aux),  
     NAux is N - 1,
-    interseccion_aux(Posibles, NAux, Aux, Salida),
-    !.
+    interseccion_aux(Posibles, NAux, Aux, Salida).
 
 interseccion_aux(Posibles, N, In, Out):-
     append([_], In, Aux), % Agrego al final de la lista.
     NAux is N - 1,
-    interseccion_aux(Posibles, NAux, Aux, Out),
-    !.
+    interseccion_aux(Posibles, NAux, Aux, Out).
 
 
 % Chequea si la longitud de las pistas más los espacios que habría entre ellas es igual a la longitud L.
@@ -473,12 +460,10 @@ primer_pasada_aux(_, [], [], _) :- !.
 primer_pasada_aux([Fila|ColaFila], [Pista|ColaPista], [FilaSalida|ColaSalida], Longitud):-
     cumple_condicion(Pista, Longitud),
     fila_correcta(Fila, Pista, Longitud, FilaSalida),
-    primer_pasada_aux(ColaFila, ColaPista, ColaSalida, Longitud),
-    !.
+    primer_pasada_aux(ColaFila, ColaPista, ColaSalida, Longitud).
     
 primer_pasada_aux([Fila|ColaFila], [_Pista|ColaPista], [Fila|ColaSalida], Longitud):-
-    primer_pasada_aux(ColaFila, ColaPista, ColaSalida, Longitud),
-    !.
+    primer_pasada_aux(ColaFila, ColaPista, ColaSalida, Longitud).
 
 
 
@@ -492,8 +477,7 @@ luego se compara la grilla original con la recién generada, si son iguales ento
 
 segunda_pasada(GrillaIn, PistasFila, _PistasColumna, GrillaIn):-
     length(PistasFila, L),
-    grilla_completa(GrillaIn, L),
-    !.
+    grilla_completa(GrillaIn, L).
 
 segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
 
@@ -501,12 +485,11 @@ segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
     (
 
         grillas_iguales(GrillaIn, GrillaAux),
-        GrillaOut = GrillaAux,
-        !; 
+        GrillaOut = GrillaAux
+        ; 
         
         segunda_pasada(GrillaAux, PistasFila, PistasColumna, GrillaOut)
-    ),
-    !.
+    ).
 
 
 
@@ -515,8 +498,7 @@ segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
 grillas_iguales([], []) :- !.
 grillas_iguales([Fila1|Subgrilla1], [Fila2|Subgrilla2]):-
     filas_iguales(Fila1, Fila2),
-    grillas_iguales(Subgrilla1, Subgrilla2),
-    !.
+    grillas_iguales(Subgrilla1, Subgrilla2).
 
 % Verifica que dos filas sean iguales chequeando si el elemento que encabeza ambas listas es el mismo
 % filas_iguales(+Fila1,+Fila2).
@@ -524,13 +506,11 @@ filas_iguales([], []) :- !.
 filas_iguales([Elemento1|Subfila1], [Elemento2|Subfila2]):-
     var(Elemento1),
     var(Elemento2),
-    filas_iguales(Subfila1, Subfila2),
-    !.
+    filas_iguales(Subfila1, Subfila2).
 
 filas_iguales([Elemento1|Subfila1], [Elemento2|Subfila2]):-
     Elemento1 == Elemento2,
-    filas_iguales(Subfila1, Subfila2),
-    !.
+    filas_iguales(Subfila1, Subfila2).
 
 % Verifica si todas las filas de una grilla estan completamente instanciadas.
 % grilla_completa(+Grilla,+Indice).
@@ -539,8 +519,7 @@ grilla_completa(Grilla, Indice):-
     IndiceAux is Indice - 1,
     obtener_fila(Grilla, IndiceAux, Fila), 
     elementos_instanciados(Fila),
-    grilla_completa(Grilla, IndiceAux),
-    !.
+    grilla_completa(Grilla, IndiceAux).
 
             
 
@@ -563,8 +542,7 @@ grilla_correcta(Grilla, PistasFilas, PistasColumnas, Salida):-
     transpose(GrillasFilasCautas, Traspuesta),
     length(PistasColumnas, LengthPC),
     generar_filas_correctas(Traspuesta, PistasColumnas, GrillasColumnasCautas, 0, LengthPC),
-    transpose(GrillasColumnasCautas, Salida),
-    !.
+    transpose(GrillasColumnasCautas, Salida).
 
 % Genera una fila de salida con las pistas que se pueden afirmar.
 % generar_filas_correctas(+Grilla, +PistasFilas, -Salida, +Indice, +Longitud).
@@ -577,44 +555,37 @@ generar_filas_correctas(Grilla, Pistas, [FilaCorrecta|GrillaCorrecta], Indice, L
     length(Fila, L),
     fila_correcta(Fila, PistaObtenida, L, FilaCorrecta),
     IndiceAux is Indice + 1, 
-    generar_filas_correctas(Grilla, Pistas, GrillaCorrecta, IndiceAux, Longitud),
-    !.
+    generar_filas_correctas(Grilla, Pistas, GrillaCorrecta, IndiceAux, Longitud).
 
 % ultima_pasada(+Grilla,+PistasFilas,+PistasColumna,-Salida).                   
 % procesa una grilla basándose en las pistas dadas para las filas y columnas, completando la grilla y verificando que las columnas también cumplan con sus pistas
 ultima_pasada(Grilla, PistasFila, PistasCol, GrillaSalida):-
-    ultima_pasada_aux(Grilla, PistasFila, PistasCol, [], GrillaSalida),
-    !.
+    ultima_pasada_aux(Grilla, PistasFila, PistasCol, [], GrillaSalida).
 
 % ultima_pasada_aux(+GrillaIN, +PistasFilas, +PistasColumna, +Acumulado, -Salida). 
 ultima_pasada_aux(_Grilla, [], PistasColumna, Acumulado, GrillaSalida):-
     length(PistasColumna, LengthCol),
     verifica_pistas_columna(Acumulado, 0, LengthCol, PistasColumna, CheckColumna),
     todas_iguales(1, CheckColumna),
-    GrillaSalida = Acumulado,
-    !.
+    GrillaSalida = Acumulado.
 
 ultima_pasada_aux([Fila|Completo], [_Pista|ColaPistas], PistasColumna, Acumulado, GrillaSalida):- 
     forall(member(Elem, Fila), nonvar(Elem)),
     append(Acumulado, [Fila], ListaAux),
-    ultima_pasada_aux(Completo, ColaPistas, PistasColumna, ListaAux, GrillaSalida),
-    !.
+    ultima_pasada_aux(Completo, ColaPistas, PistasColumna, ListaAux, GrillaSalida).
 
 ultima_pasada_aux([Fila|ColaFilas], [PrimeraPistaFila|ColaPistasFila], PistasCol, Acumulado, GrillaSalida):-
     generar_posibles_soluciones(Fila, PrimeraPistaFila), 
     append(Acumulado, [Fila], ListaAux),
-    ultima_pasada_aux(ColaFilas, ColaPistasFila, PistasCol, ListaAux, GrillaSalida),
-    !.
+    ultima_pasada_aux(ColaFilas, ColaPistasFila, PistasCol, ListaAux, GrillaSalida).
 
 % solucion(+Grilla,+PistasFilas,+PistasColumna,-Salida). 
 
 solucion(Grilla, PistasFila, PistasColumna, GrillaFinal):-
     primer_pasada(Grilla, PistasFila, PistasColumna, GrillaPrimerPasada),
-    !,
     segunda_pasada(GrillaPrimerPasada, PistasFila, PistasColumna, GrillaSegundaPasada),
-    !,
-    ultima_pasada(GrillaSegundaPasada, PistasFila, PistasColumna, GrillaFinal),
-    !.
+    ultima_pasada(GrillaSegundaPasada, PistasFila, PistasColumna, GrillaFinal).
+
 
 
 /*
@@ -631,5 +602,41 @@ proylcc: solucion(
  [[3], [1,2], [4], [5], [5]],	
 [[2], [5], [1,3], [5], [4]],
 GrillaCumpleuelta).
+
+proylcc: solucion(
+[[ _ , _ , _ , _ , _ ], 		
+ [ _ , _ , _ , _ , _ ],
+ [ _ , _ , _ , _ , _ ],	
+ [ _ , _ , _ , _ , _ ],
+ [ _ , _ , _ , _ , _ ]],
+ [[1,1], [5], [5], [3], [1]],	
+[[2], [4], [4], [4], [2]],
+GrillaCumpleuelta).
+
+
+
+proylcc: solucion(
+[[ _ , _ , _ , _ , _ ],		
+ [ _ , _ , _ , _ , _ ],
+ ["#", _ , _ , _ , _ ],	
+ [ _ , _ , _ , _ , _ ],
+ [ _ , _ ,"#", _ , _ ]],
+ [[2], [1,1], [2], [3], [4]],	
+[[3], [1,1,1], [2], [2], [1,2]],
+GrillaCumpleuelta).
+
+
+proylcc: solucion(
+[["X", _ , _ , _ , _ ],		
+ [ _ , _ , _ , _ , _ ],
+ [ _ ,"#", _ , _ ,"#"],	
+ ["#", _ , _ ,"#", _ ],
+ [ _ , _ , _ , _ , _ ]],
+ [[1], [1], [2,2], [2,2], [2,1]],	
+[[3], [3], [2], [2], [3]],
+GrillaCumpleuelta).
+
+
+
 
 */
