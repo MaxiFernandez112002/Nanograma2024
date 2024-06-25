@@ -356,12 +356,12 @@ Dada una pista retorna una lista que corresponda con la pista dada
 */
 generar_posibles_soluciones([],[]) :- !.
 
-generar_posibles_soluciones([Elem|ColaLista],Pista):- 
-    Elem = "#", 
-    generar_posibles_soluciones_aux([Elem|ColaLista],Pista).
+generar_posibles_soluciones(["#"|ColaLista],Pista):- 
+    %Elem = "#", 
+    generar_posibles_soluciones_aux(["#"|ColaLista],Pista).
 
-generar_posibles_soluciones([Elem|ColaLista],Pista):- 
-    Elem = "X", 
+generar_posibles_soluciones(["X"|ColaLista],Pista):- 
+    %Elem = "X", 
     generar_posibles_soluciones(ColaLista,Pista).
 
 /*
@@ -370,14 +370,14 @@ generar_posibles_soluciones_aux(-Lista,+Pistas)
 
 generar_posibles_soluciones_aux([],[0]) :- !.
 
-generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):- 
-    Elem = "#",
+generar_posibles_soluciones_aux(["#"|ColaLista],[Pista|ColaPista]):- 
+    %Elem = "#",
     Pista \= 0, 
     PistaAux is Pista-1, 
     generar_posibles_soluciones_aux(ColaLista,[PistaAux|ColaPista]).
 
-generar_posibles_soluciones_aux([Elem|ColaLista],[Pista|ColaPista]):- 
-    Elem = "X", 
+generar_posibles_soluciones_aux(["X"|ColaLista],[Pista|ColaPista]):- 
+    %Elem = "X", 
     Pista is 0, 
     generar_posibles_soluciones(ColaLista,ColaPista).
 
