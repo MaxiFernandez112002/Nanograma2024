@@ -64,6 +64,7 @@ function Game() {
                 console.error("Error al inicializar el juego:", response);
             }
         });
+        console.log("Sali exitosamente de handleServerReady");
     }
 
     function handleClick(i, j, content) {
@@ -74,84 +75,41 @@ function Game() {
         const squaresS = JSON.stringify(grid).replaceAll('"_"', '_');
         const rowsCluesS = JSON.stringify(rowsClues);
         const colsCluesS = JSON.stringify(colsClues);
-        
-        console.log(revealingMode);
-        console.log(grid[i][j]);
-
-        /* 
-            si estamos en el modo revelar y la celda esta vacia, entonces 
-                la celda se va a rellenar con la solucion
-            si no estamos en modo revelar o el contenido de la celda es err
-                funciona normal
-        */
-
-        // Si estamos en modo de revelación y la celda está vacía
-        if (revealingMode) {
-
-            if (grid[i][j] === '_'){
-                content = solutionGrid[i][j];
-                setGrid(grid);
-            
-                // Consulta normal para poner contenido en la celda
-                const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, NonogramaCompletado)`;
     
-                setWaiting(true);
-     
-                 pengine.query(queryS, (success, response) => {
-                    if (success) {
-                        setGrid(response['ResGrid']);
-     
-                    if (response['RowSat'] === 1)
-                        filasSatisfechas[i] = 1;
-                    else
-                        filasSatisfechas[i] = 0;
-     
-                     if (response['ColSat'] === 1)
-                        columnasSatisfechas[j] = 1;
-                     else
-                        columnasSatisfechas[j] = 0;
-                    }
-     
-                 if (response['NonogramaCompletado'] === 1) {
-                     setGameOver(true);
-                     setStatusText("¡Felicidades! ¡Has ganado!");
-                 }
-     
-                 setWaiting(false);
-
-             });
-          }
+        console.log("RevealingMode activado? : ", revealingMode);
+        console.log("Celda clickeada : ", i, j);
+        console.log("Contenido de la celda: ", grid[i][j]);
+    
+        if (revealingMode && grid[i][j] === '_') {
+            content = solutionGrid[i][j];
+            console.log("Entre a revealing mode y el contenido a colocar es: ", content);
+        } else {
+            console.log("No entre a revealing mode y el contenido a colocar es: ", content);
         }
-        else{
-                // Consulta normal para poner contenido en la celda
-              const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, NonogramaCompletado)`;
     
-            setWaiting(true);
-        
-            pengine.query(queryS, (success, response) => {
-                if (success) {
-                    setGrid(response['ResGrid']);
+        const queryS = `put("${content}", [${i},${j}], ${rowsCluesS}, ${colsCluesS}, ${squaresS}, ResGrid, RowSat, ColSat, NonogramaCompletado)`;
     
-                    if (response['RowSat'] === 1)
-                           filasSatisfechas[i] = 1;
-                    else
-                        filasSatisfechas[i] = 0;
-        
-                    if (response['ColSat'] === 1)
-                        columnasSatisfechas[j] = 1;
-                    else
-                      columnasSatisfechas[j] = 0;
-                    }
-        
-                    if (response['NonogramaCompletado'] === 1) {
-                        setGameOver(true);
-                        setStatusText("¡Felicidades! ¡Has ganado!");
-                    }
-                    
-               setWaiting(false);
-            });
-        }
+        setWaiting(true);
+    
+        pengine.query(queryS, (success, response) => {
+            console.log("");
+            if (success) {
+                console.log("Entre al sucess");
+                setGrid(response['ResGrid']);
+    
+                filasSatisfechas[i] = response['RowSat'] === 1 ? 1 : 0;
+                columnasSatisfechas[j] = response['ColSat'] === 1 ? 1 : 0;
+    
+                if (response['NonogramaCompletado'] === 1) {
+                    setGameOver(true);
+                    setStatusText("¡Felicidades! ¡Has ganado!");
+                }
+            }
+    
+            setWaiting(false);
+        });
     }
+    
 
     function handleToggleContent() {
         setSelectedContent(selectedContent === 'X' ? '#' : 'X');

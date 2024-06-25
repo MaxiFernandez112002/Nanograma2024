@@ -1,7 +1,7 @@
 :-module(proylcc,[ put/9, solucion/4, comprobar_grilla_react/5 ]).
 
 :-use_module(library(lists)).
-:- use_module(library(clpfd)).
+:-use_module(library(clpfd)).
 
 
 % replace(?X, +XIndex, +Y, +Xs, -XsY)
@@ -191,6 +191,7 @@ comprobar_todas_filas(Grilla, FilaSat, PistasFilas, CantFilas):-
 	Aux is CantFilas - 1,
 	Aux >= 0,																		
 	verificar_fila(Aux, PistasFilas, Grilla, FilaSat),
+    FilaSat is 1,
 	comprobar_todas_filas(Grilla, FilaSat, PistasFilas, Aux).
 
 
@@ -208,6 +209,7 @@ comprobar_todas_columnas(Grilla, ColSat, PistasCol, CantColumnas):-
 	Aux is CantColumnas - 1,
 	Aux >= 0,																		
 	verificar_columna(Aux, PistasCol, Grilla, ColSat),
+    ColSat is 1,
 	comprobar_todas_columnas(Grilla, ColSat, PistasCol, Aux).
 
 
@@ -267,6 +269,7 @@ verifica_pista([Elem],[0],1):-
 verifica_pista([],[0],1):- !.
 
 verifica_pista([],[],1):- !.
+
 
 verifica_pista([Elem|ColaLista],Pista,Cumple):- 
     no_esta_instanciado(Elem),
@@ -636,6 +639,31 @@ proylcc: solucion(
 [[3], [3], [2], [2], [3]],
 GrillaCumpleuelta).
 
+
+proylcc: solucion(
+[[ _ , _ , _ , _ , _ ], 		
+ [ _ , _ , _ , _ , _ ],
+ [ _ , _ , _ , _ , _ ],	
+ [ _ , _ , _ , _ , _ ],
+ [ _ , _ , _ , _ , _ ]],
+ [[1], [1], [2,2], [1,2], [4]],	
+[[2], [3], [1], [3], [1,3]],
+GrillaCumpleuelta).
+
+
+proylcc:put("#", [1,3],  
+	[[3], [1,2], [4], [5], [5]],
+	[[2], [5], [1,3], [5], [4]],
+	[["X",_,_,_,_], 		
+ 	["X",_,"X",_,_],
+ 	["X",_,_,_,_],		
+ 	["#","#","#","#","#"],
+ 	["#","#","#","#","#"]],
+	NuevaGrilla,
+	FilaSat,
+	ColSat,
+	NonogramaCompletado
+	 ).
 
 
 
