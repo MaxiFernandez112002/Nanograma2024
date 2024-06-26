@@ -478,9 +478,8 @@ entonces simplemente devuelve la misma grilla como grilla de salida, caso contra
 luego se compara la grilla original con la recién generada, si son iguales entonces ya se obtuvo la grilla de salida, sino se vuelve a llamar recursivamente.
 */
 
-segunda_pasada(GrillaIn, PistasFila, _PistasColumna, GrillaIn):-
-    length(PistasFila, L),
-    grilla_completa(GrillaIn, L).
+segunda_pasada(GrillaIn, _PistasFila, _PistasColumna, GrillaIn):-
+ grilla_completa(GrillaIn).
 
 segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
 
@@ -516,15 +515,11 @@ filas_iguales([Elemento1|Subfila1], [Elemento2|Subfila2]):-
     filas_iguales(Subfila1, Subfila2).
 
 % Verifica si todas las filas de una grilla estan completamente instanciadas.
-% grilla_completa(+Grilla,+Indice).
-grilla_completa(_, 0) :- !.
-grilla_completa(Grilla, Indice):-
-    IndiceAux is Indice - 1,
-    obtener_fila(Grilla, IndiceAux, Fila), 
+% grilla_completa(+Grilla).
+grilla_completa([]) :- !.
+grilla_completa([Fila|ColaGrilla]):-
     elementos_instanciados(Fila),
-    grilla_completa(Grilla, IndiceAux).
-
-            
+    grilla_completa(ColaGrilla).
 
 
 % Verifica que todos los elementos de una lista esten instanciados.
@@ -533,8 +528,6 @@ elementos_instanciados([]).
 elementos_instanciados([X|Xs]):-
 	forall(member(Elem,X), not(no_esta_instanciado(Elem))),
 	elementos_instanciados(Xs).
-
-
 
 
 % Dada una grilla, las pistas de fila y las pistas de columna retorna una grilla con las pistas que se pueden afirmar
@@ -547,7 +540,7 @@ grilla_correcta(Grilla, PistasFilas, PistasColumnas, Salida):-
     transpose(GrillasColumnasCautas, Salida).
 
 % Genera una fila de salida con las pistas que se pueden afirmar.
-% generar_filas_correctas(+Grilla, +PistasFilas, -Salida, +Indice, +Longitud).
+% generar_filas_correctas(+Grilla, +PistasFilas, -Salida).
 
 generar_filas_correctas([], [], []) :- !.
 
@@ -586,9 +579,7 @@ solucion(Grilla, PistasFila, PistasColumna, GrillaFinal):-
     ultima_pasada(GrillaSegundaPasada, PistasFila, PistasColumna, GrillaFinal).
 
 
-
 /*
-
 proylcc: solucion([["X","_","_","_","_"],["X","_","X","_","_"],["X","_","_","_","_"],["#","#","#","#","#"],["#","#","#","#","#"]], [[3],[1,2],[4],[5],[5]], [[2],[5],[1,3],[5],[4]], GrillaSolucionada).
 proylcc: generar_posibles_soluciones(Lista, [3]).
 
