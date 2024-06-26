@@ -490,7 +490,6 @@ segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
         grillas_iguales(GrillaIn, GrillaAux),
         GrillaOut = GrillaAux
         ; 
-        
         segunda_pasada(GrillaAux, PistasFila, PistasColumna, GrillaOut)
     ).
 
@@ -499,6 +498,7 @@ segunda_pasada(GrillaIn, PistasFila, PistasColumna, GrillaOut):-
 %Verifica que dos grillas sean iguales
 % grillas_iguales(+Grilla1,+Grilla2).
 grillas_iguales([], []) :- !.
+
 grillas_iguales([Fila1|Subgrilla1], [Fila2|Subgrilla2]):-
     filas_iguales(Fila1, Fila2),
     grillas_iguales(Subgrilla1, Subgrilla2).
@@ -539,26 +539,22 @@ elementos_instanciados([X|Xs]):-
 
 % Dada una grilla, las pistas de fila y las pistas de columna retorna una grilla con las pistas que se pueden afirmar
 % grilla_correcta(+Grilla,+PistasFilas,+PistasColumnas,-Salida).  
+
 grilla_correcta(Grilla, PistasFilas, PistasColumnas, Salida):-
-    length(PistasFilas, LengthFC),
-    generar_filas_correctas(Grilla, PistasFilas, GrillasFilasCautas, 0, LengthFC),
+    generar_filas_correctas(Grilla, PistasFilas, GrillasFilasCautas),
     transpose(GrillasFilasCautas, Traspuesta),
-    length(PistasColumnas, LengthPC),
-    generar_filas_correctas(Traspuesta, PistasColumnas, GrillasColumnasCautas, 0, LengthPC),
+    generar_filas_correctas(Traspuesta, PistasColumnas, GrillasColumnasCautas),
     transpose(GrillasColumnasCautas, Salida).
 
 % Genera una fila de salida con las pistas que se pueden afirmar.
 % generar_filas_correctas(+Grilla, +PistasFilas, -Salida, +Indice, +Longitud).
 
-generar_filas_correctas(_, _, [], Longitud, Longitud) :- !.
+generar_filas_correctas([], [], []) :- !.
 
-generar_filas_correctas(Grilla, Pistas, [FilaCorrecta|GrillaCorrecta], Indice, Longitud):-
-    obtener_fila(Grilla, Indice, Fila),
-    obtener_pista(Indice, Pistas, PistaObtenida),
+generar_filas_correctas([Fila|Grilla], [Pista|ColaPistas], [FilaCorrecta|GrillaCorrecta]):-
     length(Fila, L),
-    fila_correcta(Fila, PistaObtenida, L, FilaCorrecta),
-    IndiceAux is Indice + 1, 
-    generar_filas_correctas(Grilla, Pistas, GrillaCorrecta, IndiceAux, Longitud).
+    fila_correcta(Fila, Pista, L, FilaCorrecta), 
+    generar_filas_correctas(Grilla, ColaPistas, GrillaCorrecta).
 
 % ultima_pasada(+Grilla,+PistasFilas,+PistasColumna,-Salida).                   
 % procesa una grilla basándose en las pistas dadas para las filas y columnas, completando la grilla y verificando que las columnas también cumplan con sus pistas
