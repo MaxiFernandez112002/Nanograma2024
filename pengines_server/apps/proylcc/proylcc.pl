@@ -58,36 +58,6 @@ put(Contenido, [FilaNumero, ColNumero], PistasFilas, PistasColumnas, Grilla, Nue
 
 
 /*
-CASO BUENO 
-proylcc:put("#", [1,3],  
-	[[3], [1,2], [4], [5], [5]],
-	[[2], [5], [1,3], [5], [4]],
-	[["X","#","#","#","X"], 		
- 	["X","#","X","X","#"],
- 	["X","#","#","#","#"],		
- 	["#","#","#","#","#"],
- 	["#","#","#","#","#"]],
-	NuevaGrilla,
-	FilaSat,
-	ColSat,
-	NonogramaCompletado
-	 ).
-
-CASO MALO
-proylcc:put("#", [1,3], 
-	[[3], [1,2], [4], [5], [5]],
-	[[2], [5], [1,3], [5], [4]],
-	[["X","#","#","#","#"], 		
- 	["X","#","X","X","#"],
- 	["X","#","#","#","#"],		
- 	["#","#","#","#","#"],
- 	["#","#","#","#","#"]],
-	NuevaGrilla,
-	FilaSat,
-	ColSat,
-	NonogramaCompletado
-	 ).
-
 verificar_fila(+Posicion,+ListaPistas,+GrillaCumple,-N)
 verifica que la fila/columna tenga sus pistas satisfechas.
 1==TRUE, 0==FALSE
@@ -275,9 +245,8 @@ verifica_pista([Elem|ColaLista],Pista,Cumple):-
     no_esta_instanciado(Elem),
     verifica_pista(ColaLista,Pista,Cumple).
 
-verifica_pista([Elem|ColaLista],Pista,Cumple):- 
-    Elem == "#",
-    verifica_pista_aux([Elem|ColaLista],Pista,Cumple).
+verifica_pista(["#"|ColaLista],Pista,Cumple):- 
+    verifica_pista_aux(["#"|ColaLista],Pista,Cumple).
 
 verifica_pista(_,_,0).
 
@@ -297,8 +266,7 @@ verifica_pista_aux([Elem],[0],1):-
 
 verifica_pista_aux([],[0],1):- !.
 
-verifica_pista_aux([Elem|ColaLista],[Pista|ColaPista],Cumple):-
-    Elem == "#",
+verifica_pista_aux(["#"|ColaLista],[Pista|ColaPista],Cumple):-
     PistaAux is Pista-1,
     verifica_pista_aux(ColaLista,[PistaAux|ColaPista],Cumple).
 
@@ -357,11 +325,9 @@ Dada una pista retorna una lista que corresponda con la pista dada
 generar_posibles_soluciones([],[]) :- !.
 
 generar_posibles_soluciones(["#"|ColaLista],Pista):- 
-    %Elem = "#", 
     generar_posibles_soluciones_aux(["#"|ColaLista],Pista).
 
 generar_posibles_soluciones(["X"|ColaLista],Pista):- 
-    %Elem = "X", 
     generar_posibles_soluciones(ColaLista,Pista).
 
 /*
@@ -371,13 +337,11 @@ generar_posibles_soluciones_aux(-Lista,+Pistas)
 generar_posibles_soluciones_aux([],[0]) :- !.
 
 generar_posibles_soluciones_aux(["#"|ColaLista],[Pista|ColaPista]):- 
-    %Elem = "#",
     Pista \= 0, 
     PistaAux is Pista-1, 
     generar_posibles_soluciones_aux(ColaLista,[PistaAux|ColaPista]).
 
 generar_posibles_soluciones_aux(["X"|ColaLista],[Pista|ColaPista]):- 
-    %Elem = "X", 
     Pista is 0, 
     generar_posibles_soluciones(ColaLista,ColaPista).
 
